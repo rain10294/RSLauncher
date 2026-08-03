@@ -1,14 +1,21 @@
-appId: 'helioslauncher'
-productName: 'Helios Launcher'
+appId: 'kr.rslauncher.launcher'
+productName: 'RSLauncher'
 artifactName: '${productName}-setup-${version}.${ext}'
 
-copyright: 'Copyright © 2018-2026 Daniel Scalzi'
+copyright: 'Copyright © 2026 RSLauncher contributors'
 
 asar: true
 compression: 'maximum'
 
+# Prevent electron-builder from inferring the upstream Helios Git remote.
+# Runtime updates remain disabled while launcher.json updateUrl is empty.
+publish:
+  - provider: 'generic'
+    url: 'https://updates.invalid/rslauncher/'
+    publishAutoUpdate: false
+
 files:
-  - '!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.nvmrc,eslint.config.mjs}'
+  - '!{dist,dist-client-id,release,artifacts,profile-builder,.gitignore,.vscode,docs,dev-app-update.yml,.nvmrc,eslint.config.mjs}'
 
 extraResources:
   - 'libraries'
@@ -39,10 +46,10 @@ mac:
 # Linux Configuration
 linux: 
   target: 'AppImage'
-  maintainer: 'Daniel Scalzi'
-  vendor: 'Daniel Scalzi'
-  synopsis: 'Modded Minecraft Launcher'
-  description: 'Custom launcher which allows users to join modded servers. All mods, configurations, and updates are handled automatically.'
+  maintainer: 'RSLauncher contributors'
+  vendor: 'RSLauncher'
+  synopsis: 'RSLauncher Minecraft Launcher'
+  description: 'Helios 기반 RSLauncher. 게임 파일, Java 런타임, 서버 구성을 자동으로 관리합니다.'
   category: 'Game'
 
 

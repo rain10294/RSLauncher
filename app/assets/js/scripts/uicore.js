@@ -11,6 +11,7 @@ const remote                         = require('@electron/remote')
 const isDev                          = require('./assets/js/isdev')
 const { LoggerUtil }                 = require('helios-core')
 const Lang                           = require('./assets/js/langloader')
+const { AUTO_UPDATE_ENABLED }        = require('./assets/js/ipcconstants')
 
 const loggerUICore             = LoggerUtil.getLogger('UICore')
 const loggerAutoUpdater        = LoggerUtil.getLogger('AutoUpdater')
@@ -37,7 +38,7 @@ webFrame.setVisualZoomLevelLimits(1, 1)
 
 // Initialize auto updates in production environments.
 let updateCheckListener
-if(!isDev){
+if(!isDev && AUTO_UPDATE_ENABLED){
     ipcRenderer.on('autoUpdateNotification', (event, arg, info) => {
         switch(arg){
             case 'checking-for-update':
@@ -46,11 +47,6 @@ if(!isDev){
                 break
             case 'update-available':
                 loggerAutoUpdater.info('New update available', info.version)
-                
-                if(process.platform === 'darwin'){
-                    info.darwindownload = `https://github.com/dscalzi/HeliosLauncher/releases/download/v${info.version}/Helios-Launcher-setup-${info.version}${process.arch === 'arm64' ? '-arm64' : '-x64'}.dmg`
-                    showUpdateUI(info)
-                }
                 
                 populateSettingsUpdateInformation(info)
                 break

@@ -1,6 +1,6 @@
 const loginOptionsCancelContainer = document.getElementById('loginOptionCancelContainer')
 const loginOptionMicrosoft = document.getElementById('loginOptionMicrosoft')
-const loginOptionMojang = document.getElementById('loginOptionMojang')
+const loginOptionBrowser = document.getElementById('loginOptionBrowser')
 const loginOptionsCancelButton = document.getElementById('loginOptionCancelButton')
 
 let loginOptionsCancellable = false
@@ -18,7 +18,7 @@ function loginOptionsCancelEnabled(val){
     }
 }
 
-loginOptionMicrosoft.onclick = (e) => {
+function openMicrosoftLogin(){
     switchView(getCurrentView(), VIEWS.waiting, 500, 500, () => {
         ipcRenderer.send(
             MSFT_OPCODE.OPEN_LOGIN,
@@ -28,13 +28,8 @@ loginOptionMicrosoft.onclick = (e) => {
     })
 }
 
-loginOptionMojang.onclick = (e) => {
-    switchView(getCurrentView(), VIEWS.login, 500, 500, () => {
-        loginViewOnSuccess = loginOptionsViewOnLoginSuccess
-        loginViewOnCancel = loginOptionsViewOnLoginCancel
-        loginCancelEnabled(true)
-    })
-}
+loginOptionMicrosoft.onclick = openMicrosoftLogin
+loginOptionBrowser.onclick = openMicrosoftLogin
 
 loginOptionsCancelButton.onclick = (e) => {
     switchView(getCurrentView(), loginOptionsViewOnCancel, 500, 500, () => {

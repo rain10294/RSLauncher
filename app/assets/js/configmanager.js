@@ -7,7 +7,7 @@ const logger = LoggerUtil.getLogger('ConfigManager')
 
 const sysRoot = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME)
 
-const dataPath = path.join(sysRoot, '.helioslauncher')
+const dataPath = path.join(sysRoot, '.rslauncher-helios')
 
 const launcherDir = require('@electron/remote').app.getPath('userData')
 
@@ -202,7 +202,7 @@ exports.isFirstLaunch = function(){
  * @returns {string} The name of the folder.
  */
 exports.getTempNativeFolder = function(){
-    return 'WCNatives'
+    return 'RSLauncherNatives'
 }
 
 // System Settings (Unconfigurable on UI)

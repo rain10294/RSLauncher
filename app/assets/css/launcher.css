@@ -3966,3 +3966,222 @@ input:checked + .toggleSwitchSlider:before {
 .rotating {
     animation: rotating 10s linear infinite;
 }
+
+/*******************************************************************************
+ * RSLauncher Theme
+ ******************************************************************************/
+
+:root {
+    --rs-accent: #4da728;
+    --rs-accent-hover: #5bbb32;
+    --rs-surface: #111513;
+    --rs-panel: rgba(18, 23, 20, 0.94);
+    --rs-muted: #8e9d95;
+}
+
+body,
+button,
+input {
+    font-family: "Segoe UI", "Noto Sans KR", sans-serif;
+}
+
+body {
+    background-color: var(--rs-surface);
+    background-position: center;
+}
+
+#frameBar {
+    background: #1a1f1d !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+#frameTitleText {
+    font-family: "Segoe UI", "Noto Sans KR", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0;
+}
+
+#main {
+    background: linear-gradient(90deg, rgba(10, 14, 12, 0.82), rgba(10, 14, 12, 0.25));
+}
+
+#loginOptionsContainer {
+    background: rgba(14, 17, 16, 0.96);
+    backdrop-filter: blur(16px);
+}
+
+#loginOptionsContent {
+    top: -2%;
+}
+
+.loginOptionsMainContent {
+    min-width: 360px;
+}
+
+.rsLoginIconWrap {
+    width: 66px;
+    height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.025);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+
+.rsLoginIcon {
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
+}
+
+.rsLoginTitle {
+    margin: 14px 0 0;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.rsLoginSubtitle {
+    margin: 8px 0 36px;
+    color: var(--rs-muted);
+    font-size: 13px;
+}
+
+.loginOptionActions,
+.loginOptionButtonContainer {
+    width: 320px;
+}
+
+.loginOptionActions {
+    gap: 0;
+}
+
+.loginOptionButton {
+    justify-content: center;
+    height: 46px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--rs-accent);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 8px 22px rgba(50, 120, 24, 0.18);
+}
+
+.loginOptionButton:hover,
+.loginOptionButton:focus {
+    background: var(--rs-accent-hover);
+    text-shadow: none;
+    transform: translateY(-1px);
+}
+
+.loginOptionButton:active {
+    transform: translateY(0);
+}
+
+.loginOptionButton.rsBrowserLogin {
+    height: 38px;
+    margin-top: 4px;
+    background: transparent;
+    color: #91a49a;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.loginOptionButton.rsBrowserLogin:hover,
+.loginOptionButton.rsBrowserLogin:focus {
+    color: #d9e4dd;
+    background: transparent;
+}
+
+#loginOptionCancelContainer {
+    bottom: -72px;
+}
+
+#landingContainer {
+    background: linear-gradient(90deg, rgba(8, 12, 10, 0.6), rgba(8, 12, 10, 0.04));
+}
+
+#landingContainer > #upper > #content {
+    align-items: center;
+    justify-content: center;
+}
+
+#image_seal,
+#image_seal_container {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+}
+
+#image_seal {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(8, 12, 10, 0.38);
+    object-fit: contain;
+}
+
+#landingContainer > #lower {
+    background: linear-gradient(to top, rgba(8, 12, 10, 0.96), rgba(8, 12, 10, 0.05));
+}
+
+#launch_button {
+    min-width: 112px;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 8px;
+    background: var(--rs-accent);
+    box-shadow: 0 9px 24px rgba(45, 110, 18, 0.28);
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-shadow: none;
+}
+
+#launch_button:hover,
+#launch_button:focus {
+    background: var(--rs-accent-hover);
+    text-shadow: none;
+    transform: translateY(-1px);
+}
+
+#settingsAddMojangAccount,
+#settingsMojangAccounts {
+    display: none !important;
+}
+
+#loadingContainer {
+    background: var(--rs-surface);
+}
+
+#loadSpinnerContainer {
+    width: 110px;
+    height: 110px;
+}
+
+#loadCenterImage {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    z-index: 402;
+}
+
+#rsLoadingRing {
+    width: 94px;
+    height: 94px;
+    z-index: 401;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-top-color: var(--rs-accent);
+    border-radius: 50%;
+}
+
+#welcomeButton,
+#settingsUpdateActionButton,
+.settingsAuthAccountAdd {
+    border-color: var(--rs-accent);
+}

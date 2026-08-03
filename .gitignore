@@ -4,3 +4,7 @@
 /target/
 /logs/
 /dist/
+/dist-client-id/
+/release/
+/artifacts/
+/profile-builder/

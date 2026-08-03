@@ -1,14 +1,11 @@
 {
-  "name": "helioslauncher",
-  "version": "2.2.1",
-  "productName": "Helios Launcher",
-  "description": "Modded Minecraft Launcher",
-  "author": "Daniel Scalzi (https://github.com/dscalzi/)",
-  "license": "UNLICENSED",
-  "homepage": "https://github.com/dscalzi/HeliosLauncher",
-  "bugs": {
-    "url": "https://github.com/dscalzi/HeliosLauncher/issues"
-  },
+  "name": "rslauncher",
+  "version": "1.0.2",
+  "productName": "RSLauncher",
+  "description": "RSLauncher - Helios 기반 Minecraft 런처",
+  "author": "RSLauncher contributors",
+  "license": "MIT",
+  "homepage": "https://github.com/rain10294/RSLauncher",
   "private": true,
   "main": "index.js",
   "scripts": {
@@ -24,11 +21,11 @@
   },
   "dependencies": {
     "@electron/remote": "^2.1.3",
-    "adm-zip": "^0.5.16",
+    "adm-zip": "^0.6.0",
     "discord-rpc-patch": "^4.0.1",
     "ejs": "^3.1.10",
     "ejs-electron": "^3.0.0",
-    "electron-updater": "^6.7.3",
+    "electron-updater": "^6.8.9",
     "fs-extra": "^11.3.3",
     "github-syntax-dark": "^0.5.0",
     "got": "^11.8.5",
@@ -41,12 +38,8 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.6.1",
-    "electron": "^39.2.7",
-    "electron-builder": "^26.4.0",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^9.39.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dscalzi/HeliosLauncher.git"
   }
 }

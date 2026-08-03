@@ -5,19 +5,30 @@ remoteMain.initialize()
 const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron')
 const autoUpdater                       = require('electron-updater').autoUpdater
 const ejse                              = require('ejs-electron')
-const fs                                = require('fs')
 const isDev                             = require('./app/assets/js/isdev')
 const path                              = require('path')
 const semver                            = require('semver')
 const { pathToFileURL }                 = require('url')
-const { AZURE_CLIENT_ID, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE } = require('./app/assets/js/ipcconstants')
+const { AZURE_CLIENT_ID, UPDATE_URL, AUTO_UPDATE_ENABLED, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE } = require('./app/assets/js/ipcconstants')
 const LangLoader                        = require('./app/assets/js/langloader')
+
+// Avoid colliding with older launchers which already use %APPDATA%/rslauncher.
+app.setPath('userData', path.join(app.getPath('appData'), 'RSLauncherHelios'))
 
 // Setup Lang
 LangLoader.setupLanguage()
 
 // Setup auto updater.
 function initAutoUpdater(event, data) {
+
+    if(!AUTO_UPDATE_ENABLED){
+        return false
+    }
+
+    autoUpdater.setFeedURL({
+        provider: 'generic',
+        url: UPDATE_URL
+    })
 
     if(data){
         autoUpdater.allowPrerelease = true
@@ -47,18 +58,27 @@ function initAutoUpdater(event, data) {
     })
     autoUpdater.on('error', (err) => {
         event.sender.send('autoUpdateNotification', 'realerror', err)
-    }) 
+    })
+    return true
 }
 
 // Open channel to listen for update actions.
 ipcMain.on('autoUpdateAction', (event, arg, data) => {
     switch(arg){
         case 'initAutoUpdater':
-            console.log('Initializing auto updater.')
-            initAutoUpdater(event, data)
-            event.sender.send('autoUpdateNotification', 'ready')
+            if(initAutoUpdater(event, data)){
+                console.log('Initializing RSLauncher auto updater.')
+                event.sender.send('autoUpdateNotification', 'ready')
+            } else {
+                console.log('RSLauncher auto updater is disabled: no update URL configured.')
+                event.sender.send('autoUpdateNotification', 'disabled')
+            }
             break
         case 'checkForUpdate':
+            if(!AUTO_UPDATE_ENABLED){
+                event.sender.send('autoUpdateNotification', 'disabled')
+                break
+            }
             autoUpdater.checkForUpdates()
                 .catch(err => {
                     event.sender.send('autoUpdateNotification', 'realerror', err)
@@ -77,18 +97,15 @@ ipcMain.on('autoUpdateAction', (event, arg, data) => {
             }
             break
         case 'installUpdateNow':
-            autoUpdater.quitAndInstall()
+            if(AUTO_UPDATE_ENABLED){
+                autoUpdater.quitAndInstall()
+            }
             break
         default:
             console.log('Unknown argument', arg)
             break
     }
 })
-// Redirect distribution index event from preloader to renderer.
-ipcMain.on('distributionIndexDone', (event, res) => {
-    event.sender.send('distributionIndexDone', res)
-})
-
 // Handle trash item.
 ipcMain.handle(SHELL_OPCODE.TRASH_ITEM, async (event, ...args) => {
     try {
@@ -117,6 +134,10 @@ let msftAuthSuccess
 let msftAuthViewSuccess
 let msftAuthViewOnClose
 ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, (ipcEvent, ...arguments_) => {
+    if (!AZURE_CLIENT_ID) {
+        ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.ERROR, MSFT_ERROR.CONFIG_REQUIRED, arguments_[1])
+        return
+    }
     if (msftAuthWindow) {
         ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.ERROR, MSFT_ERROR.ALREADY_OPEN, msftAuthViewOnClose)
         return
@@ -130,7 +151,7 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, (ipcEvent, ...arguments_) => {
         width: 520,
         height: 600,
         frame: true,
-        icon: getPlatformIcon('SealCircle')
+        icon: getPlatformIcon('RSIcon')
     })
 
     msftAuthWindow.on('closed', () => {
@@ -148,8 +169,8 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, (ipcEvent, ...arguments_) => {
             let queryMap = {}
             
             new URL(uri).searchParams.forEach((v, k) => {
-                queryMap[k] = v;
-            });
+                queryMap[k] = v
+            })
 
             ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.SUCCESS, queryMap, msftAuthViewSuccess)
 
@@ -181,7 +202,7 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
         width: 520,
         height: 600,
         frame: true,
-        icon: getPlatformIcon('SealCircle')
+        icon: getPlatformIcon('RSIcon')
     })
 
     msftLogoutWindow.on('closed', () => {
@@ -225,21 +246,24 @@ let win
 function createWindow() {
 
     win = new BrowserWindow({
-        width: 980,
-        height: 552,
-        icon: getPlatformIcon('SealCircle'),
+        width: 1100,
+        height: 680,
+        minWidth: 900,
+        minHeight: 560,
+        title: 'RSLauncher',
+        icon: getPlatformIcon('RSIcon'),
         frame: false,
         webPreferences: {
             preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
             nodeIntegration: true,
             contextIsolation: false
         },
-        backgroundColor: '#171614'
+        backgroundColor: '#111513'
     })
     remoteMain.enable(win.webContents)
 
     const data = {
-        bkid: Math.floor((Math.random() * fs.readdirSync(path.join(__dirname, 'app', 'assets', 'images', 'backgrounds')).length)),
+        bkid: 0,
         lang: (str, placeHolders) => LangLoader.queryEJS(str, placeHolders)
     }
     Object.entries(data).forEach(([key, val]) => ejse.data(key, val))

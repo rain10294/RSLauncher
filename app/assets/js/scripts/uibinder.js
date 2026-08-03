@@ -10,8 +10,7 @@ const AuthManager   = require('./assets/js/authmanager')
 const ConfigManager = require('./assets/js/configmanager')
 const { DistroAPI } = require('./assets/js/distromanager')
 
-let rscShouldLoad = false
-let fatalStartupError = false
+let mainUIInitialization
 
 // Mapping of each view to their container IDs.
 const VIEWS = {
@@ -59,17 +58,20 @@ function getCurrentView(){
 
 async function showMainUI(data){
 
-    if(!isDev){
+    if(!isDev && AUTO_UPDATE_ENABLED){
         loggerAutoUpdater.info('Initializing..')
         ipcRenderer.send('autoUpdateAction', 'initAutoUpdater', ConfigManager.getAllowPrerelease())
     }
 
     await prepareSettings(true)
+    if(!AUTO_UPDATE_ENABLED){
+        document.getElementById('settingsNavUpdate').style.display = 'none'
+    }
     updateSelectedServer(data.getServerById(ConfigManager.getSelectedServer()))
     refreshServerStatus()
     setTimeout(() => {
         document.getElementById('frameBar').style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
-        document.body.style.backgroundImage = `url('assets/images/backgrounds/${document.body.getAttribute('bkid')}.jpg')`
+        document.body.style.backgroundImage = 'url(\'assets/images/RSBackground.png\')'
         $('#main').show()
 
         const isLoggedIn = Object.keys(ConfigManager.getAuthAccounts()).length > 0
@@ -80,20 +82,15 @@ async function showMainUI(data){
             validateSelectedAccount()
         }
 
-        if(ConfigManager.isFirstLaunch()){
-            currentView = VIEWS.welcome
-            $(VIEWS.welcome).fadeIn(1000)
+        if(isLoggedIn){
+            currentView = VIEWS.landing
+            $(VIEWS.landing).fadeIn(1000)
         } else {
-            if(isLoggedIn){
-                currentView = VIEWS.landing
-                $(VIEWS.landing).fadeIn(1000)
-            } else {
-                loginOptionsCancelEnabled(false)
-                loginOptionsViewOnLoginSuccess = VIEWS.landing
-                loginOptionsViewOnLoginCancel = VIEWS.loginOptions
-                currentView = VIEWS.loginOptions
-                $(VIEWS.loginOptions).fadeIn(1000)
-            }
+            loginOptionsCancelEnabled(false)
+            loginOptionsViewOnLoginSuccess = VIEWS.landing
+            loginOptionsViewOnLoginCancel = VIEWS.loginOptions
+            currentView = VIEWS.loginOptions
+            $(VIEWS.loginOptions).fadeIn(1000)
         }
 
         setTimeout(() => {
@@ -418,43 +415,44 @@ function setSelectedAccount(uuid){
     validateSelectedAccount()
 }
 
-// Synchronous Listener
-document.addEventListener('readystatechange', async () => {
+async function initializeMainUI(){
+    if(mainUIInitialization != null){
+        return mainUIInitialization
+    }
 
-    if (document.readyState === 'interactive' || document.readyState === 'complete'){
-        if(rscShouldLoad){
-            rscShouldLoad = false
-            if(!fatalStartupError){
-                const data = await DistroAPI.getDistribution()
-                await showMainUI(data)
-            } else {
-                showFatalStartupError()
+    mainUIInitialization = (async () => {
+        try {
+            // The renderer owns startup so a fast bundled distribution cannot
+            // finish before an IPC listener has been registered.
+            DistroAPI['commonDir'] = ConfigManager.getCommonDirectory()
+            DistroAPI['instanceDir'] = ConfigManager.getInstanceDirectory()
+            const data = await DistroAPI.getDistribution()
+
+            if(ConfigManager.getSelectedServer() == null || data.getServerById(ConfigManager.getSelectedServer()) == null){
+                ConfigManager.setSelectedServer(data.getMainServer().rawServer.id)
+                ConfigManager.save()
             }
-        } 
-    }
 
-}, false)
-
-// Actions that must be performed after the distribution index is downloaded.
-ipcRenderer.on('distributionIndexDone', async (event, res) => {
-    if(res) {
-        const data = await DistroAPI.getDistribution()
-        syncModConfigurations(data)
-        ensureJavaSettings(data)
-        if(document.readyState === 'interactive' || document.readyState === 'complete'){
+            syncModConfigurations(data)
+            ensureJavaSettings(data)
             await showMainUI(data)
-        } else {
-            rscShouldLoad = true
-        }
-    } else {
-        fatalStartupError = true
-        if(document.readyState === 'interactive' || document.readyState === 'complete'){
+        } catch(error) {
+            loggerUICore.error('Unable to initialize the distribution index.', error)
             showFatalStartupError()
-        } else {
-            rscShouldLoad = true
         }
+    })()
+
+    return mainUIInitialization
+}
+
+function initializeMainUIWhenReady(){
+    if(document.readyState === 'interactive' || document.readyState === 'complete'){
+        initializeMainUI()
     }
-})
+}
+
+document.addEventListener('readystatechange', initializeMainUIWhenReady, false)
+initializeMainUIWhenReady()
 
 // Util for development
 async function devModeToggle() {

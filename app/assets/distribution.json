@@ -1,0 +1,471 @@
+{
+  "version": "1.0.0",
+  "servers": [
+    {
+      "id": "Test",
+      "name": "Test",
+      "description": "Test",
+      "icon": "",
+      "version": "1.0.0",
+      "address": "localhost",
+      "minecraftVersion": "1.21.1",
+      "mainServer": true,
+      "autoconnect": true,
+      "javaOptions": {
+        "supported": ">=21 <22",
+        "suggestedMajor": 21,
+        "distribution": "TEMURIN",
+        "ram": {
+          "recommended": 4096,
+          "minimum": 2048
+        }
+      },
+      "modules": [
+        {
+          "id": "net.fabricmc:fabric-loader:0.19.2",
+          "name": "Fabric Loader 0.19.2",
+          "type": "Fabric",
+          "artifact": {
+            "size": 1968930,
+            "MD5": "d692407a67129e913b4210218edebb20",
+            "url": "https://maven.fabricmc.net/net/fabricmc/fabric-loader/0.19.2/fabric-loader-0.19.2.jar"
+          },
+          "subModules": [
+            {
+              "id": "fabric-loader-0.19.2-1.21.1",
+              "name": "Fabric 1.21.1 Version Manifest",
+              "type": "VersionManifest",
+              "artifact": {
+                "size": 2847,
+                "MD5": "0dad640c016771e7b5ee908e8adc4540",
+                "url": "https://meta.fabricmc.net/v2/versions/loader/1.21.1/0.19.2/profile/json"
+              }
+            },
+            {
+              "id": "org.ow2.asm:asm:9.9",
+              "name": "ASM",
+              "type": "Library",
+              "artifact": {
+                "size": 126122,
+                "MD5": "6d1dd0482c03a6dc1807d9d004456021",
+                "url": "https://maven.fabricmc.net/org/ow2/asm/asm/9.9/asm-9.9.jar"
+              }
+            },
+            {
+              "id": "org.ow2.asm:asm-analysis:9.9",
+              "name": "ASM Analysis",
+              "type": "Library",
+              "artifact": {
+                "size": 35149,
+                "MD5": "f07383cfbd50f097558341a03b8871e1",
+                "url": "https://maven.fabricmc.net/org/ow2/asm/asm-analysis/9.9/asm-analysis-9.9.jar"
+              }
+            },
+            {
+              "id": "org.ow2.asm:asm-commons:9.9",
+              "name": "ASM Commons",
+              "type": "Library",
+              "artifact": {
+                "size": 74348,
+                "MD5": "8103b3de8f48fb4c7f97efdaa46ce809",
+                "url": "https://maven.fabricmc.net/org/ow2/asm/asm-commons/9.9/asm-commons-9.9.jar"
+              }
+            },
+            {
+              "id": "org.ow2.asm:asm-tree:9.9",
+              "name": "ASM Tree",
+              "type": "Library",
+              "artifact": {
+                "size": 51947,
+                "MD5": "912eeaba1a63d574ffc66c651c7c6725",
+                "url": "https://maven.fabricmc.net/org/ow2/asm/asm-tree/9.9/asm-tree-9.9.jar"
+              }
+            },
+            {
+              "id": "org.ow2.asm:asm-util:9.9",
+              "name": "ASM Util",
+              "type": "Library",
+              "artifact": {
+                "size": 94565,
+                "MD5": "ef5e90e736cd09bc407c1d46a3faba0f",
+                "url": "https://maven.fabricmc.net/org/ow2/asm/asm-util/9.9/asm-util-9.9.jar"
+              }
+            },
+            {
+              "id": "net.fabricmc:sponge-mixin:0.17.2+mixin.0.8.7",
+              "name": "Sponge Mixin",
+              "type": "Library",
+              "artifact": {
+                "size": 1540039,
+                "MD5": "4b6b96074976cc7aa096b9e569ca623e",
+                "url": "https://maven.fabricmc.net/net/fabricmc/sponge-mixin/0.17.2+mixin.0.8.7/sponge-mixin-0.17.2+mixin.0.8.7.jar"
+              }
+            },
+            {
+              "id": "net.fabricmc:intermediary:1.21.1",
+              "name": "Fabric Intermediary",
+              "type": "Library",
+              "artifact": {
+                "size": 657725,
+                "MD5": "850be48a3406b9efdf8e64b1c2db97f8",
+                "url": "https://maven.fabricmc.net/net/fabricmc/intermediary/1.21.1/intermediary-1.21.1.jar"
+              }
+            }
+          ]
+        },
+        {
+          "id": "kr.rslauncher.mods:axiom-5.4.2-for-mc1.21.1:1.0.0-76fce4da@jar",
+          "name": "Axiom-5.4.2-for-MC1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 47067416,
+            "MD5": "76fce4da6c71015bcf3072974126feb2",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/Axiom-5.4.2-for-MC1.21.1.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:bobby-5.2.4.1-mc1.21:1.0.0-90abe004@jar",
+          "name": "bobby-5.2.4.1+mc1.21",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 863337,
+            "MD5": "90abe004f5ee049f70047bdbdf3f80a6",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/bobby-5.2.4.1%2Bmc1.21.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:caramelchat-mc1.21.1-fabric-1.2.2:1.0.0-59c8ae91@jar",
+          "name": "caramelChat-mc1.21.1-fabric-1.2.2",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 163711,
+            "MD5": "59c8ae912459442c192ff5537bf17f7a",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/caramelChat-mc1.21.1-fabric-1.2.2.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:catenary-1.3:1.0.0-0290aaf4@jar",
+          "name": "catenary-1.3",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 3218599,
+            "MD5": "0290aaf42fadd58b7ea79f0b3585a2d9",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/catenary-1.3.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:cloth-config-15.0.140-fabric:1.0.0-a2c091b0@jar",
+          "name": "cloth-config-15.0.140-fabric",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 1157166,
+            "MD5": "a2c091b027ad6ba8e54b07020fd45884",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/cloth-config-15.0.140-fabric.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:commandkeys-fabric-2.4.0-1.21.1:1.0.0-7d1d805d@jar",
+          "name": "commandkeys-fabric-2.4.0+1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 267132,
+            "MD5": "7d1d805ddbf734a46abafa78e18b2678",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/commandkeys-fabric-2.4.0%2B1.21.1.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:continuity-3.0.0-1.21:1.0.0-daee3841@jar",
+          "name": "continuity-3.0.0+1.21",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 1014044,
+            "MD5": "daee3841730e2576a621943f289deadb",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/continuity-3.0.0%2B1.21.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:double_hotbar-1.3.3-mc1.21-fabric:1.0.0-324d1d1e@jar",
+          "name": "double_hotbar-1.3.3-mc1.21-fabric",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 36599,
+            "MD5": "324d1d1ea65cf4b9795979cd1f0ee500",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/double_hotbar-1.3.3-mc1.21-fabric.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:entityculling-fabric-1.10.5-mc1.21.1:1.0.0-833cb8fd@jar",
+          "name": "entityculling-fabric-1.10.5-mc1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 1595131,
+            "MD5": "833cb8fd661a52acf63856d22e45f832",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/entityculling-fabric-1.10.5-mc1.21.1.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:fabric-api-0.116.15-1.21.1:1.0.0-e24c27a4@jar",
+          "name": "fabric-api-0.116.15+1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 2452718,
+            "MD5": "e24c27a4ece4ee82ca7a55f2f5b544f4",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/fabric-api-0.116.15%2B1.21.1.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:fabric-language-kotlin-1.13.13-kotlin.2.4.10:1.0.0-b7047026@jar",
+          "name": "fabric-language-kotlin-1.13.13+kotlin.2.4.10",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 8076363,
+            "MD5": "b70470268be8c74a10e10b24a2bf7df6",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/fabric-language-kotlin-1.13.13%2Bkotlin.2.4.10.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:ferritecore-7.0.3-fabric:1.0.0-b8513c8c@jar",
+          "name": "ferritecore-7.0.3-fabric",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 123450,
+            "MD5": "b8513c8c3eef01ea1117ed8d8cba060d",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/ferritecore-7.0.3-fabric.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:immediatelyfast-fabric-1.6.11-1.21.1:1.0.0-ff2f33b4@jar",
+          "name": "ImmediatelyFast-Fabric-1.6.11+1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 336763,
+            "MD5": "ff2f33b4f400d9ccf3bc6e160246b101",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/ImmediatelyFast-Fabric-1.6.11%2B1.21.1.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:iris-fabric-1.8.14-beta.1-mc1.21.1:1.0.0-4399f0c3@jar",
+          "name": "iris-fabric-1.8.14-beta.1+mc1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 2791343,
+            "MD5": "4399f0c3edfe2af7f61db3725fe5c751",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/iris-fabric-1.8.14-beta.1%2Bmc1.21.1.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:modernfix-fabric-5.25.1-mc1.21.1:1.0.0-17260c89@jar",
+          "name": "modernfix-fabric-5.25.1+mc1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 471258,
+            "MD5": "17260c894041b7b4a1b1f2fd1a8f1a8b",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/modernfix-fabric-5.25.1%2Bmc1.21.1.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:modmenu-11.0.4:1.0.0-b2b9c53a@jar",
+          "name": "modmenu-11.0.4",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 973059,
+            "MD5": "b2b9c53a887c100f780708c4f36db6c4",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/modmenu-11.0.4.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:mousetweaks-fabric-mc1.21-2.26:1.0.0-1d39ead1@jar",
+          "name": "MouseTweaks-fabric-mc1.21-2.26",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 75984,
+            "MD5": "1d39ead1641ef522bc7ae92383f21da8",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/MouseTweaks-fabric-mc1.21-2.26.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:placeholder-api-2.4.2-1.21:1.0.0-4de8568a@jar",
+          "name": "placeholder-api-2.4.2+1.21",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 232325,
+            "MD5": "4de8568a088a276c94168514d625413d",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/placeholder-api-2.4.2%2B1.21.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:sodium-fabric-0.8.13-beta.1-mc1.21.1:1.0.0-1d3953c3@jar",
+          "name": "sodium-fabric-0.8.13-beta.1+mc1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 1573754,
+            "MD5": "1d3953c309f30a661eaeed485509fb1a",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/sodium-fabric-0.8.13-beta.1%2Bmc1.21.1.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:worldeditcui-1.21.1-01:1.0.0-c9fcb700@jar",
+          "name": "WorldEditCUI-1.21.1+01",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 680100,
+            "MD5": "c9fcb700593c358ea6fd9ab18b280ed7",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/WorldEditCUI-1.21.1%2B01.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:yet_another_config_lib_v3-3.8.2-1.21.1-fabric:1.0.0-aadf11f5@jar",
+          "name": "yet_another_config_lib_v3-3.8.2+1.21.1-fabric",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 1131265,
+            "MD5": "aadf11f5a793296be7c195e1ca388492",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/yet_another_config_lib_v3-3.8.2%2B1.21.1-fabric.jar"
+          }
+        },
+        {
+          "id": "kr.rslauncher.mods:zoomify-2.15.2-1.21.1:1.0.0-e3beea86@jar",
+          "name": "zoomify-2.15.2+1.21.1",
+          "type": "FabricMod",
+          "artifact": {
+            "size": 872937,
+            "MD5": "e3beea86fba08bffe61ccad28df6c676",
+            "url": "http://localhost:3000/Desktop/files/Test/mods/zoomify-2.15.2%2B1.21.1.jar"
+          }
+        },
+        {
+          "id": "file-shaderpacks-r-lAstra-4-lLex-r-l_By_LexBoosT_-4-lV93.0-r-l.zip-021c95bd",
+          "name": "§r§lAstra§4§lLex§r§l_By_LexBoosT_§4§lV93.0§r§l.zip",
+          "type": "File",
+          "artifact": {
+            "size": 3184524,
+            "MD5": "021c95bd3d217b4a7e45997d5127285b",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/%C2%A7r%C2%A7lAstra%C2%A74%C2%A7lLex%C2%A7r%C2%A7l_By_LexBoosT_%C2%A74%C2%A7lV93.0%C2%A7r%C2%A7l.zip",
+            "path": "shaderpacks/§r§lAstra§4§lLex§r§l_By_LexBoosT_§4§lV93.0§r§l.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-Bliss_v2.1.2_-Chocapic13_Shaders_edit-.zip-73eac5d0",
+          "name": "Bliss_v2.1.2_(Chocapic13_Shaders_edit).zip",
+          "type": "File",
+          "artifact": {
+            "size": 1791406,
+            "MD5": "73eac5d017a268ea8175c2025c2863ad",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/Bliss_v2.1.2_(Chocapic13_Shaders_edit).zip",
+            "path": "shaderpacks/Bliss_v2.1.2_(Chocapic13_Shaders_edit).zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-BSL_v10.1.3.zip-324f09c3",
+          "name": "BSL_v10.1.3.zip",
+          "type": "File",
+          "artifact": {
+            "size": 1127026,
+            "MD5": "324f09c3d1c736576a09782ff75c2f68",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/BSL_v10.1.3.zip",
+            "path": "shaderpacks/BSL_v10.1.3.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-ComplementaryUnbound_r5.8.1.zip-0a355310",
+          "name": "ComplementaryUnbound_r5.8.1.zip",
+          "type": "File",
+          "artifact": {
+            "size": 546928,
+            "MD5": "0a3553109dbe689a9f76d1aedc8f50c6",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/ComplementaryUnbound_r5.8.1.zip",
+            "path": "shaderpacks/ComplementaryUnbound_r5.8.1.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-Insanity-Shader-Universal-v1.650.zip-97a61aad",
+          "name": "Insanity-Shader-Universal-v1.650.zip",
+          "type": "File",
+          "artifact": {
+            "size": 1037373,
+            "MD5": "97a61aad0133f120e536a420b92d4e88",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/Insanity-Shader-Universal-v1.650.zip",
+            "path": "shaderpacks/Insanity-Shader-Universal-v1.650.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-MakeUp-UltraFast-9.5c.zip-9d15e01b",
+          "name": "MakeUp-UltraFast-9.5c.zip",
+          "type": "File",
+          "artifact": {
+            "size": 398840,
+            "MD5": "9d15e01beb2f8681489ac13f236e26fb",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/MakeUp-UltraFast-9.5c.zip",
+            "path": "shaderpacks/MakeUp-UltraFast-9.5c.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-photon_v1.3b.zip-6360159a",
+          "name": "photon_v1.3b.zip",
+          "type": "File",
+          "artifact": {
+            "size": 3800987,
+            "MD5": "6360159abc1bdd417ef8b40abc70e080",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/photon_v1.3b.zip",
+            "path": "shaderpacks/photon_v1.3b.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-rethinking-voxels_r0.1-beta9.zip-f77fadf6",
+          "name": "rethinking-voxels_r0.1-beta9.zip",
+          "type": "File",
+          "artifact": {
+            "size": 8301317,
+            "MD5": "f77fadf6045e18bab72343ba75438c41",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/rethinking-voxels_r0.1-beta9.zip",
+            "path": "shaderpacks/rethinking-voxels_r0.1-beta9.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-Simply-Shaded.zip-78ffe3af",
+          "name": "Simply Shaded.zip",
+          "type": "File",
+          "artifact": {
+            "size": 6607,
+            "MD5": "78ffe3af3e535a3070c341f960b6f197",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/Simply%20Shaded.zip",
+            "path": "shaderpacks/Simply Shaded.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-Solas-Shader-V3.7.zip-2f03bf24",
+          "name": "Solas Shader V3.7.zip",
+          "type": "File",
+          "artifact": {
+            "size": 1241525,
+            "MD5": "2f03bf2470dc5be446ed49a3d05bf794",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/Solas%20Shader%20V3.7.zip",
+            "path": "shaderpacks/Solas Shader V3.7.zip"
+          }
+        },
+        {
+          "id": "file-shaderpacks-superDuperVanilla.zip-00b068ef",
+          "name": "superDuperVanilla.zip",
+          "type": "File",
+          "artifact": {
+            "size": 2851664,
+            "MD5": "00b068ef8600472d52da2c10aab68cb9",
+            "url": "http://localhost:3000/Desktop/files/Test/shaderpacks/superDuperVanilla.zip",
+            "path": "shaderpacks/superDuperVanilla.zip"
+          }
+        },
+        {
+          "id": "file-options-options.txt-91371cea",
+          "name": "options.txt",
+          "type": "File",
+          "artifact": {
+            "size": 5559,
+            "MD5": "91371ceab69ef2710b4eaf03a12ae3f0",
+            "url": "http://localhost:3000/Desktop/files/Test/options/options.txt",
+            "path": "options.txt"
+          }
+        }
+      ]
+    }
+  ]
+}

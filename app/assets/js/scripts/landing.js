@@ -169,7 +169,7 @@ function updateSelectedServer(serv){
     }
     setLaunchEnabled(serv != null)
 }
-// Real text is set in uibinder.js on distributionIndexDone.
+// Real text is set in uibinder.js after distribution initialization.
 server_selection_button.innerHTML = '&#8226; ' + Lang.queryJS('landing.selectedServer.loading')
 server_selection_button.onclick = async e => {
     e.target.blur()
@@ -267,7 +267,7 @@ const refreshServerStatus = async (fade = false) => {
 }
 
 refreshMojangStatuses()
-// Server Status is refreshed in uibinder.js on distributionIndexDone.
+// Server status is refreshed in uibinder.js after distribution initialization.
 
 // Refresh statuses every hour. The status page itself refreshes every day so...
 let mojangStatusListener = setInterval(() => refreshMojangStatuses(true), 60*60*1000)
@@ -961,7 +961,7 @@ async function loadNews(){
     const distroData = await DistroAPI.getDistribution()
     if(!distroData.rawDistribution.rss) {
         loggerLanding.debug('No RSS feed provided.')
-        return null
+        return { articles: [] }
     }
 
     const promise = new Promise((resolve, reject) => {
