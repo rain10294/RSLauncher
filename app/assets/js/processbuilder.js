@@ -38,6 +38,7 @@ class ProcessBuilder {
 
         this.usingLiteLoader = false
         this.usingFabricLoader = false
+        this.usingNeoForgeLoader = false
         this.llPath = null
     }
     
@@ -52,6 +53,8 @@ class ProcessBuilder {
         logger.info('Using liteloader:', this.usingLiteLoader)
         this.usingFabricLoader = this.server.modules.some(mdl => mdl.rawModule.type === Type.Fabric)
         logger.info('Using fabric loader:', this.usingFabricLoader)
+        this.usingNeoForgeLoader = this.server.modules.some(mdl => mdl.rawModule.type === Type.Forge && (mdl.rawModule.id || '').startsWith('net.neoforged:neoforge:'))
+        logger.info('Using NeoForge loader:', this.usingNeoForgeLoader)
         const modObj = this.resolveModConfiguration(ConfigManager.getModConfiguration(this.server.rawServer.id).mods, this.server.modules)
         
         // Mod list below 1.13
@@ -675,7 +678,7 @@ class ProcessBuilder {
     classpathArg(mods, tempNativePath){
         let cpArgs = []
 
-        if(!mcVersionAtLeast('1.17', this.server.rawServer.minecraftVersion) || this.usingFabricLoader) {
+        if(!mcVersionAtLeast('1.17', this.server.rawServer.minecraftVersion) || this.usingFabricLoader || this.usingNeoForgeLoader) {
             // Add the version.jar to the classpath.
             // Must not be added to the classpath for Forge 1.17+.
             const version = this.vanillaManifest.id
@@ -690,18 +693,41 @@ class ProcessBuilder {
         // Resolve the Mojang declared libraries.
         const mojangLibs = this._resolveMojangLibraries(tempNativePath)
 
+        // NeoForge's installed version manifest declares its runtime libraries.
+        const neoForgeLibs = this._resolveNeoForgeLibraries()
+
         // Resolve the server declared libraries.
         const servLibs = this._resolveServerLibraries(mods)
 
         // Merge libraries, server libs with the same
         // maven identifier will override the mojang ones.
         // Ex. 1.7.10 forge overrides mojang's guava with newer version.
-        const finalLibs = {...mojangLibs, ...servLibs}
+        const finalLibs = {...mojangLibs, ...neoForgeLibs, ...servLibs}
         cpArgs = cpArgs.concat(Object.values(finalLibs))
 
         this._processClassPathList(cpArgs)
 
         return cpArgs
+    }
+
+    _resolveNeoForgeLibraries(){
+        if(!this.usingNeoForgeLoader || !Array.isArray(this.modManifest.libraries)) {
+            return {}
+        }
+
+        const libs = {}
+        for(const lib of this.modManifest.libraries) {
+            if(!isLibraryCompatible(lib.rules, lib.natives)) {
+                continue
+            }
+            const artifact = lib.downloads?.artifact
+            if(!artifact?.path) {
+                continue
+            }
+            const versionIndependentId = lib.name.substring(0, lib.name.lastIndexOf(':'))
+            libs[versionIndependentId] = path.join(this.libPath, artifact.path)
+        }
+        return libs
     }
 
     /**

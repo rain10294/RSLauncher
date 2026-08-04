@@ -29,6 +29,7 @@ const {
 
 // Internal Requirements
 const DiscordWrapper          = require('./assets/js/discordwrapper')
+const NeoForgeInstaller       = require('./assets/js/neoforgeinstaller')
 const ProcessBuilder          = require('./assets/js/processbuilder')
 
 // Launch Elements
@@ -442,7 +443,7 @@ let hasRPC = false
 // Joined server regex
 // Change this if your server uses something different.
 const GAME_JOINED_REGEX = /\[.+\]: Sound engine started/
-const GAME_LAUNCH_REGEX = /^\[.+\]: (?:MinecraftForge .+ Initialized|ModLauncher .+ starting: .+|Loading Minecraft .+ with Fabric Loader .+)$/
+const GAME_LAUNCH_REGEX = /^\[.+\]: (?:MinecraftForge .+ Initialized|ModLauncher .+ starting: .+|Loading Minecraft .+ with Fabric Loader .+|Loading Minecraft .+ with NeoForge .+)$/
 const MIN_LINGER = 5000
 
 async function dlAsync(login = true) {
@@ -537,6 +538,17 @@ async function dlAsync(login = true) {
 
     fullRepairModule.destroyReceiver()
 
+    if(NeoForgeInstaller.getNeoForgeModule(serv)) {
+        setLaunchDetails(Lang.queryJS('landing.dlAsync.installingNeoForge'))
+        try {
+            await NeoForgeInstaller.ensureInstalled(serv)
+        } catch(err) {
+            loggerLaunchSuite.error('NeoForge installation failed.', err)
+            showLaunchFailure(Lang.queryJS('landing.dlAsync.neoForgeInstallErrorTitle'), err.message || Lang.queryJS('landing.dlAsync.seeConsoleForDetails'))
+            return
+        }
+    }
+
     setLaunchDetails(Lang.queryJS('landing.dlAsync.preparingToLaunch'))
 
     const mojangIndexProcessor = new MojangIndexProcessor(
@@ -548,7 +560,9 @@ async function dlAsync(login = true) {
         serv.rawServer.id
     )
 
-    const modLoaderData = await distributionIndexProcessor.loadModLoaderVersionJson(serv)
+    const modLoaderData = NeoForgeInstaller.getNeoForgeModule(serv)
+        ? await NeoForgeInstaller.loadVersionManifest(serv)
+        : await distributionIndexProcessor.loadModLoaderVersionJson(serv)
     const versionData = await mojangIndexProcessor.getVersionJson()
 
     if(login) {

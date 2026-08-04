@@ -2,6 +2,8 @@
 
 RSLauncher는 [Helios Launcher](https://github.com/dscalzi/HeliosLauncher)를 기반으로 만든 Minecraft Java Edition 런처입니다. Microsoft 계정 인증, Java 자동 관리, 게임 파일 검증, 서버별 배포 인덱스와 자동 접속을 지원합니다.
 
+Pack Studio에서 Minecraft 1.21.1용 Fabric 0.19.2 또는 NeoForge 21.1.248 프로필을 만들 수 있습니다. NeoForge 프로필은 첫 실행 시 공식 설치기를 자동으로 실행하며 이후에는 설치된 파일을 재사용합니다.
+
 - 공식 페이지: <https://github.com/rain10294/RSLauncher>
 - Windows 설치파일: <https://github.com/rain10294/RSLauncher/releases/latest>
 - 개인정보 처리 안내: [PRIVACY.md](PRIVACY.md)
