@@ -6,7 +6,16 @@
                 <div id="updateAvailableTooltip"><%- lang('landing.updateAvailableTooltip') %></div>
             </div>
         </div>
-        <div id="content"></div>
+        <div id="content">
+            <section id="rsLandingHero" aria-label="RSLauncher">
+                <h1 id="rsLandingTitle">RSLauncher</h1>
+                <div id="rsLandingServerName">RSLauncher</div>
+                <div id="rsLastPlayed">
+                    <span>마지막 플레이</span>
+                    <strong id="rsLastPlayedValue">기록 없음</strong>
+                </div>
+            </section>
+        </div>
         <div id="right">
             <div id="rightContainer">
                 <div id="user_content">
@@ -140,7 +149,7 @@
         <div id="right">
             <div class="bot_wrapper">
                 <div id="launch_content">
-                    <button id="launch_button"><%- lang('landing.launchButton') %></button>
+                    <button id="launch_button"><span class="rsLaunchIcon">▶</span><span>게임 시작</span></button>
                     <div class="bot_divider"></div>
                     <button id="server_selection_button" class="bot_label"><%- lang('landing.launchButtonPlaceholder') %></button>
                 </div>

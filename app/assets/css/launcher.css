@@ -4155,6 +4155,10 @@ body {
     display: none !important;
 }
 
+#settingsTabAccount > .settingsAuthAccountTypeContainer:last-child {
+    display: none;
+}
+
 #loadingContainer {
     background: var(--rs-surface);
 }
@@ -4184,4 +4188,846 @@ body {
 #settingsUpdateActionButton,
 .settingsAuthAccountAdd {
     border-color: var(--rs-accent);
+}
+
+/*******************************************************************************
+ * RSLauncher Reference Layout
+ ******************************************************************************/
+
+:root {
+    --rs-accent: #49b94f;
+    --rs-accent-hover: #58c95e;
+    --rs-accent-pressed: #3da544;
+    --rs-frame: #171b1a;
+    --rs-panel-soft: rgba(12, 17, 14, 0.76);
+    --rs-panel-strong: rgba(13, 18, 15, 0.94);
+    --rs-border: rgba(255, 255, 255, 0.10);
+    --rs-text-muted: rgba(231, 239, 234, 0.64);
+}
+
+body {
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+#frameBar {
+    height: 31px;
+    background: var(--rs-frame) !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+#frameResizableTop {
+    height: 1px;
+}
+
+#frameMain {
+    height: 30px;
+}
+
+#frameContentWin,
+#frameContentDarwin {
+    align-items: center;
+}
+
+#frameTitleDock {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 11px;
+}
+
+#frameTitleIcon {
+    width: 17px;
+    height: 17px;
+    object-fit: contain;
+}
+
+#frameTitleText {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 30px;
+}
+
+#frameButtonDockWin {
+    top: -1px;
+    right: -2px;
+    height: 31px;
+}
+
+.frameButton {
+    width: 46px;
+    height: 31px;
+}
+
+#main {
+    height: calc(100% - 31px) !important;
+    background: linear-gradient(90deg, rgba(5, 9, 7, 0.20), transparent 58%) !important;
+}
+
+#loadingContainer {
+    height: calc(100% - 31px);
+    background:
+        radial-gradient(circle at center, rgba(61, 116, 47, 0.13), transparent 34%),
+        var(--rs-frame);
+}
+
+#overlayContainer {
+    top: 31px;
+    height: calc(100% - 31px);
+    background: rgba(5, 8, 6, 0.68);
+    backdrop-filter: blur(9px);
+}
+
+/* Landing */
+#landingContainer {
+    isolation: isolate;
+    background: none;
+}
+
+#landingContainer::before,
+#landingContainer::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    content: "";
+}
+
+#landingContainer::before {
+    background: linear-gradient(90deg, rgba(3, 7, 5, 0.72) 0%, rgba(3, 7, 5, 0.34) 31%, transparent 64%);
+}
+
+#landingContainer::after {
+    background: linear-gradient(0deg, rgba(3, 7, 5, 0.72) 0%, rgba(3, 7, 5, 0.20) 27%, transparent 58%);
+}
+
+#landingContainer > #upper {
+    top: 0;
+    height: 100%;
+}
+
+#landingContainer > #upper > #left {
+    display: none;
+}
+
+#landingContainer > #upper > #content {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#rsLandingHero {
+    position: absolute;
+    left: clamp(42px, 4vw, 58px);
+    bottom: 166px;
+    animation: rsLandingEnter 560ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+#rsLandingTitle {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(54px, 5.8vw, 78px);
+    font-weight: 760;
+    letter-spacing: -4px;
+    line-height: 0.94;
+    text-shadow: 0 5px 24px rgba(0, 0, 0, 0.42);
+}
+
+#rsLandingServerName {
+    margin-top: 12px;
+    color: rgba(255, 255, 255, 0.94);
+    font-size: 14px;
+    font-weight: 680;
+}
+
+#rsLastPlayed {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 20px;
+    padding: 5px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    background: rgba(5, 8, 6, 0.40);
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 10px;
+    font-weight: 600;
+}
+
+#rsLastPlayed strong {
+    color: rgba(255, 255, 255, 0.86);
+    font-weight: 700;
+}
+
+#landingContainer > #upper > #right {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#rightContainer {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#user_content {
+    position: absolute;
+    left: clamp(190px, 18vw, 240px);
+    bottom: 137px;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 7px;
+    min-height: 24px;
+    pointer-events: auto;
+    animation: rsLandingEnter 620ms 80ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+#avatarContainer {
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--rs-accent);
+    background-position: center 8%;
+    background-size: 33px auto;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.30);
+}
+
+#avatarOverlay {
+    border-radius: 50%;
+    font-size: 0;
+}
+
+#user_text {
+    position: static;
+    min-width: 0;
+    max-width: 150px;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 22px;
+    text-align: left;
+    text-overflow: ellipsis;
+    text-shadow: 0 2px 9px rgba(0, 0, 0, 0.60);
+    white-space: nowrap;
+}
+
+#mediaContent {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    pointer-events: none;
+}
+
+#externalMedia,
+.mediaDivider {
+    display: none;
+}
+
+#internalMedia {
+    position: absolute;
+    left: calc(clamp(42px, 4vw, 58px) + 232px);
+    bottom: 67px;
+    display: block;
+    pointer-events: auto;
+    animation: rsLandingEnter 620ms 150ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+#settingsMediaContainer {
+    width: 50px;
+    height: 48px;
+}
+
+#settingsMediaButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 7px;
+    background: rgba(5, 8, 6, 0.74);
+    cursor: pointer;
+    transition: 150ms ease;
+}
+
+#settingsMediaButton:hover,
+#settingsMediaButton:focus {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(25, 32, 28, 0.92);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+#settingsSVG,
+.mediaButton:hover #settingsSVG,
+.mediaButton:focus #settingsSVG,
+.mediaButton:active #settingsSVG {
+    width: 19px;
+    height: 19px;
+    fill: rgba(255, 255, 255, 0.82);
+    stroke: none;
+}
+
+#settingsTooltip {
+    right: auto;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#settingsTooltip::after {
+    top: 100%;
+    left: 50%;
+    margin-top: 0;
+    margin-left: -5px;
+    border-color: rgba(0, 0, 0, 0.75) transparent transparent;
+}
+
+#landingContainer > #lower {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: none;
+    pointer-events: none;
+}
+
+#landingContainer > #lower > #left,
+#landingContainer > #lower > #center {
+    display: none;
+}
+
+#landingContainer > #lower > #right {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#landingContainer > #lower > #right #launch_content {
+    position: absolute;
+    top: auto;
+    bottom: 67px;
+    left: clamp(42px, 4vw, 58px);
+    display: inline-flex;
+    width: 220px;
+    height: 48px;
+    pointer-events: auto;
+    animation: rsLandingEnter 620ms 120ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+#launch_content > .bot_divider {
+    display: none;
+}
+
+#launch_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 220px;
+    min-width: 220px;
+    height: 48px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--rs-accent);
+    color: #fff;
+    box-shadow: 0 10px 28px rgba(32, 113, 39, 0.25);
+    font-size: 15px;
+    font-weight: 720;
+    letter-spacing: -0.2px;
+    text-shadow: none;
+}
+
+.rsLaunchIcon {
+    font-size: 11px;
+}
+
+#launch_button:hover,
+#launch_button:focus {
+    background: var(--rs-accent-hover);
+    box-shadow: 0 12px 32px rgba(32, 113, 39, 0.34);
+    text-shadow: none;
+    transform: translateY(-1px);
+}
+
+#launch_button:active {
+    background: var(--rs-accent-pressed);
+    transform: translateY(0);
+}
+
+#launch_button:disabled {
+    background: #5a665f;
+    color: rgba(255, 255, 255, 0.70);
+    box-shadow: none;
+}
+
+#server_selection_button {
+    position: absolute;
+    bottom: 63px;
+    left: 0;
+    display: block;
+    max-width: 210px;
+    overflow: hidden;
+    padding: 4px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 4px;
+    background: rgba(5, 8, 6, 0.48);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 18px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#server_selection_button::first-letter {
+    color: var(--rs-accent);
+}
+
+#server_selection_button:hover,
+#server_selection_button:focus {
+    border-color: rgba(73, 185, 79, 0.42);
+    background: rgba(10, 16, 12, 0.70);
+    text-shadow: none;
+}
+
+#launch_details {
+    position: absolute;
+    top: auto;
+    bottom: 67px;
+    left: clamp(42px, 4vw, 58px);
+    align-items: center;
+    width: 220px;
+    max-width: 220px !important;
+    min-height: 48px;
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 7px;
+    box-sizing: border-box;
+    background: rgba(5, 8, 6, 0.76);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+    pointer-events: auto;
+}
+
+#launch_details_left {
+    align-items: center;
+}
+
+#launch_progress_label {
+    width: 44px !important;
+    min-width: 44px;
+    max-width: 44px;
+    font-size: 14px;
+    text-align: left;
+}
+
+#launch_details .bot_divider {
+    height: 27px;
+    margin: 0 12px 0 0;
+    background: rgba(255, 255, 255, 0.13);
+}
+
+#launch_details_right {
+    width: 136px;
+    max-width: 136px !important;
+    gap: 6px;
+}
+
+#launch_progress[value] {
+    width: 136px !important;
+    height: 4px;
+}
+
+#launch_progress[value]::-webkit-progress-bar {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+#launch_progress[value]::-webkit-progress-value {
+    border-radius: 999px;
+    background: var(--rs-accent);
+}
+
+#launch_details_text {
+    color: rgba(255, 255, 255, 0.70);
+    font-size: 9px;
+    letter-spacing: 0;
+}
+
+#newsContainer {
+    display: none;
+}
+
+/* Login */
+#loginOptionsContainer,
+#loginContainer,
+#waitingContainer {
+    background:
+        linear-gradient(90deg, rgba(4, 8, 6, 0.75), rgba(4, 8, 6, 0.28) 48%, rgba(4, 8, 6, 0.12)),
+        linear-gradient(0deg, rgba(4, 8, 6, 0.56), transparent 52%);
+    backdrop-filter: blur(2px);
+}
+
+#loginOptionsContent {
+    top: 0;
+}
+
+.loginOptionsMainContent {
+    min-width: 340px;
+    padding: 34px 34px 30px;
+    border: 1px solid var(--rs-border);
+    border-radius: 12px;
+    background: rgba(10, 15, 12, 0.86);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(18px);
+}
+
+.rsLoginIconWrap {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.rsLoginIcon {
+    width: 60px;
+    height: 60px;
+}
+
+.rsLoginTitle {
+    margin-top: 18px;
+    font-size: 23px;
+}
+
+.rsLoginSubtitle {
+    margin: 7px 0 30px;
+    color: var(--rs-text-muted);
+}
+
+.loginOptionActions,
+.loginOptionButtonContainer {
+    width: 300px;
+}
+
+.loginOptionButton {
+    height: 48px;
+    border-radius: 7px;
+    background: var(--rs-accent);
+    box-shadow: 0 10px 24px rgba(32, 113, 39, 0.22);
+}
+
+.loginOptionButton:hover,
+.loginOptionButton:focus {
+    background: var(--rs-accent-hover);
+}
+
+.loginOptionButton.rsBrowserLogin {
+    color: rgba(226, 236, 229, 0.62);
+}
+
+/* Settings */
+#settingsContainer {
+    background: rgba(6, 10, 8, 0.78);
+    backdrop-filter: blur(17px);
+}
+
+#settingsContainerLeft {
+    width: 232px;
+    height: 100%;
+    padding: 28px 18px 20px;
+    border-right: 1px solid var(--rs-border);
+    background: rgba(9, 14, 11, 0.94);
+}
+
+#settingsNavHeader {
+    justify-content: flex-start;
+    height: auto;
+    padding: 0 12px 22px;
+}
+
+#settingsNavHeaderText {
+    font-size: 20px;
+    font-weight: 720;
+    letter-spacing: -0.5px;
+}
+
+#settingsNavItemsContainer,
+#settingsNavItemsContent {
+    width: 100%;
+    height: 100%;
+}
+
+.settingsNavItem,
+#settingsNavDone {
+    width: 100%;
+    min-height: 39px;
+    margin: 2px 0;
+    padding: 0 13px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    color: rgba(225, 235, 228, 0.55);
+    font-size: 12px;
+    font-weight: 610;
+    text-shadow: none;
+}
+
+.settingsNavItem:hover,
+.settingsNavItem:focus,
+#settingsNavDone:hover,
+#settingsNavDone:focus {
+    background: rgba(255, 255, 255, 0.045);
+    color: rgba(255, 255, 255, 0.88);
+    text-shadow: none;
+}
+
+.settingsNavItem[selected] {
+    border-color: rgba(73, 185, 79, 0.28);
+    background: rgba(73, 185, 79, 0.13);
+    color: #effff0;
+}
+
+#settingsNavContentBottom {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.settingsNavDivider {
+    width: calc(100% - 26px);
+    margin: 0 13px 12px;
+    background: var(--rs-border);
+}
+
+#settingsNavDone {
+    color: #fff;
+    background: var(--rs-accent);
+    text-align: center;
+}
+
+#settingsNavDone:hover,
+#settingsNavDone:focus {
+    background: var(--rs-accent-hover);
+}
+
+#settingsContainerRight {
+    flex: 1;
+    width: auto;
+    background: rgba(12, 17, 14, 0.74);
+}
+
+.settingsTab {
+    padding: 0 42px;
+    box-sizing: border-box;
+}
+
+.settingsTab::-webkit-scrollbar {
+    width: 5px;
+}
+
+.settingsTab::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.17);
+    box-shadow: none;
+}
+
+.settingsTab > *:first-child {
+    margin-top: 34px;
+}
+
+.settingsTabHeader {
+    margin-bottom: 24px;
+}
+
+.settingsTabHeaderText {
+    font-family: "Segoe UI", "Noto Sans KR", sans-serif;
+    font-size: 24px;
+    font-weight: 720;
+    letter-spacing: -0.7px;
+}
+
+.settingsTabHeaderDesc,
+.settingsFieldDesc,
+.settingsFileSelDesc,
+#settingsMemoryDesc,
+#settingsJVMOptsDesc {
+    color: var(--rs-text-muted);
+    line-height: 1.55;
+}
+
+.settingsSelServContainer,
+.settingsFieldContainer,
+.settingsFileSelContainer,
+.settingsAuthAccountTypeContainer,
+#settingsGameResolutionContainer,
+#settingsMemoryContainer,
+#settingsJVMOptsContainer,
+#settingsAboutCurrentContainer,
+.settingsChangelogContainer,
+#settingsUpdateStatusContainer {
+    border: 1px solid var(--rs-border);
+    border-radius: 9px;
+    background: rgba(5, 9, 7, 0.42);
+    box-shadow: none;
+}
+
+.settingsFieldContainer {
+    width: 75%;
+    margin: 10px 0;
+    padding: 14px 16px;
+    box-sizing: border-box;
+}
+
+#settingsContainer input[type=number],
+#settingsContainer input[type=text],
+.settingsFileSelVal,
+#settingsJVMOptsVal {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 6px;
+    background: rgba(3, 6, 4, 0.58);
+    color: #edf4ef;
+}
+
+#settingsContainer input[type=number]:focus,
+#settingsContainer input[type=text]:focus {
+    border-color: rgba(73, 185, 79, 0.65);
+    box-shadow: 0 0 0 3px rgba(73, 185, 79, 0.09);
+}
+
+.settingsAddAuthAccount,
+.settingsFileSelButton,
+.settingsSwitchServerButton,
+.settingsAboutButton,
+#settingsDropinFileSystemButton,
+#settingsShaderpackButton,
+#settingsUpdateActionButton {
+    border-color: rgba(73, 185, 79, 0.58);
+    border-radius: 6px;
+    color: #dff6e1;
+    background: rgba(73, 185, 79, 0.10);
+    text-shadow: none;
+}
+
+.settingsAddAuthAccount:hover,
+.settingsAddAuthAccount:focus,
+.settingsFileSelButton:hover,
+.settingsFileSelButton:focus,
+.settingsSwitchServerButton:hover,
+.settingsSwitchServerButton:focus,
+.settingsAboutButton:hover,
+.settingsAboutButton:focus,
+#settingsDropinFileSystemButton:hover,
+#settingsDropinFileSystemButton:focus,
+#settingsShaderpackButton:hover,
+#settingsShaderpackButton:focus,
+#settingsUpdateActionButton:hover,
+#settingsUpdateActionButton:focus {
+    background: rgba(73, 185, 79, 0.20);
+    box-shadow: none;
+    text-shadow: none;
+}
+
+.toggleSwitch input:checked + .toggleSwitchSlider {
+    background-color: var(--rs-accent);
+}
+
+.rangeSliderTrack {
+    background: var(--rs-accent);
+}
+
+/* Dialogs */
+#overlayContent {
+    width: min(430px, calc(100% - 80px));
+    padding: 34px 38px 30px;
+    border: 1px solid var(--rs-border);
+    border-radius: 12px;
+    background: var(--rs-panel-strong);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+#overlayTitle {
+    font-family: "Segoe UI", "Noto Sans KR", sans-serif;
+    font-size: 23px;
+    font-weight: 720;
+    letter-spacing: -0.5px;
+}
+
+#overlayDesc {
+    color: var(--rs-text-muted);
+    line-height: 1.6;
+}
+
+#overlayAcknowledge {
+    min-width: 120px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--rs-accent);
+    color: #fff;
+    text-shadow: none;
+}
+
+#overlayAcknowledge:hover,
+#overlayAcknowledge:focus {
+    background: var(--rs-accent-hover);
+    box-shadow: none;
+    text-shadow: none;
+}
+
+@keyframes rsLandingEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-height: 620px) {
+    #rsLandingHero {
+        bottom: 154px;
+    }
+
+    #rsLandingTitle {
+        font-size: 52px;
+    }
+
+    #rsLastPlayed {
+        margin-top: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #rsLandingHero,
+    #user_content,
+    #internalMedia,
+    #landingContainer > #lower > #right #launch_content {
+        animation: none;
+    }
 }

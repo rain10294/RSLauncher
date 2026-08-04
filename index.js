@@ -246,10 +246,10 @@ let win
 function createWindow() {
 
     win = new BrowserWindow({
-        width: 1100,
-        height: 680,
-        minWidth: 900,
-        minHeight: 560,
+        width: 1280,
+        height: 750,
+        minWidth: 1000,
+        minHeight: 620,
         title: 'RSLauncher',
         icon: getPlatformIcon('RSIcon'),
         frame: false,

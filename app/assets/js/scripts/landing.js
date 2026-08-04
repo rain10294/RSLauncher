@@ -40,8 +40,33 @@ const launch_progress_label   = document.getElementById('launch_progress_label')
 const launch_details_text     = document.getElementById('launch_details_text')
 const server_selection_button = document.getElementById('server_selection_button')
 const user_text               = document.getElementById('user_text')
+const rsLastPlayedValue       = document.getElementById('rsLastPlayedValue')
 
 const loggerLanding = LoggerUtil.getLogger('Landing')
+
+function updateLastPlayedLabel(){
+    if(rsLastPlayedValue == null){
+        return
+    }
+    const timestamp = Number.parseInt(localStorage.getItem('rslauncher.lastPlayed'), 10)
+    if(!Number.isFinite(timestamp)){
+        rsLastPlayedValue.innerHTML = '기록 없음'
+        return
+    }
+    const elapsed = Math.max(0, Date.now() - timestamp)
+    const minutes = Math.floor(elapsed / 60000)
+    if(minutes < 1){
+        rsLastPlayedValue.innerHTML = '방금 전'
+    } else if(minutes < 60){
+        rsLastPlayedValue.innerHTML = `${minutes}분 전`
+    } else if(minutes < 1440){
+        rsLastPlayedValue.innerHTML = `${Math.floor(minutes / 60)}시간 전`
+    } else {
+        rsLastPlayedValue.innerHTML = `${Math.floor(minutes / 1440)}일 전`
+    }
+}
+
+updateLastPlayedLabel()
 
 /* Launch Progress Wrapper Functions */
 
@@ -621,6 +646,8 @@ async function dlAsync(login = true) {
         try {
             // Build Minecraft process.
             proc = pb.build()
+            localStorage.setItem('rslauncher.lastPlayed', Date.now().toString())
+            updateLastPlayedLabel()
 
             // Bind listeners to stdout.
             proc.stdout.on('data', tempListener)

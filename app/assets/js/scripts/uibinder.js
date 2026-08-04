@@ -75,6 +75,8 @@ async function showMainUI(data){
         $('#main').show()
 
         const isLoggedIn = Object.keys(ConfigManager.getAuthAccounts()).length > 0
+        const uiPreview = isDev ? process.env.RSLAUNCHER_UI_PREVIEW : null
+        const previewLanding = uiPreview === 'landing' || uiPreview === 'progress'
 
         // If this is enabled in a development environment we'll get ratelimited.
         // The relaunch frequency is usually far too high.
@@ -82,9 +84,14 @@ async function showMainUI(data){
             validateSelectedAccount()
         }
 
-        if(isLoggedIn){
+        if(isLoggedIn || previewLanding){
             currentView = VIEWS.landing
             $(VIEWS.landing).fadeIn(1000)
+            if(uiPreview === 'progress'){
+                setLaunchDetails('게임 파일을 확인하고 있습니다.')
+                setLaunchPercentage(64)
+                toggleLaunchArea(true)
+            }
         } else {
             loginOptionsCancelEnabled(false)
             loginOptionsViewOnLoginSuccess = VIEWS.landing
