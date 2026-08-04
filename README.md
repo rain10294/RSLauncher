@@ -1,5 +1,15 @@
 # RSLauncher
 
+## 화이트리스트 관리
+
+- 관리자 사이트: https://rslauncher-whitelist.rain10294.workers.dev
+- 현재 기본 배포 서버의 화이트리스트 코드는 `test`입니다.
+- 사이트에 마인크래프트 Java 아이디를 추가하면 UUID가 조회되어 즉시 반영됩니다.
+- 플레이어를 추가하거나 삭제할 때 런처를 다시 배포할 필요가 없습니다.
+- 런처는 플레이 버튼을 누른 직후 권한을 확인하며, 허용된 계정만 게임 파일 설치와 실행을 시작합니다.
+
+Cloudflare Worker 소스와 배포 안내는 `whitelist-service/README.md`에 있습니다. 관리자 비밀번호와 세션 키는 Cloudflare Secret에만 저장됩니다.
+
 RSLauncher는 [Helios Launcher](https://github.com/dscalzi/HeliosLauncher)를 기반으로 만든 Minecraft Java Edition 런처입니다. Microsoft 계정 인증, Java 자동 관리, 게임 파일 검증, 서버별 배포 인덱스와 자동 접속을 지원합니다.
 
 Pack Studio에서 Minecraft 1.21.1용 Fabric 0.19.2 또는 NeoForge 21.1.248 프로필을 만들 수 있습니다. NeoForge 프로필은 첫 실행 시 공식 설치기를 자동으로 실행하며 이후에는 설치된 파일을 재사용합니다.

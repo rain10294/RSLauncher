@@ -1,0 +1,22 @@
+{
+  "name": "rslauncher-whitelist-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test",
+    "test:smoke": "node scripts/smoke.mjs",
+    "check": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "secrets:configure": "node scripts/configure-secrets.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.118.0"
+  },
+  "overrides": {
+    "undici": "7.29.0"
+  }
+}

@@ -1,5 +1,11 @@
 {
   "azureClientId": "ed3f9589-1bd1-4a5e-ada0-3feb339c2011",
   "distributionUrl": "",
-  "updateUrl": ""
+  "updateUrl": "",
+  "whitelist": {
+    "enabled": true,
+    "apiUrl": "https://rslauncher-whitelist.rain10294.workers.dev",
+    "timeoutMs": 8000,
+    "serverCodes": {}
+  }
 }

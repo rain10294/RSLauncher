@@ -8,3 +8,6 @@
 /release/
 /artifacts/
 /profile-builder/
+/whitelist-service/node_modules/
+/whitelist-service/.wrangler/
+/whitelist-service/.dev.vars*

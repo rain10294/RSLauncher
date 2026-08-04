@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "rslauncher-whitelist",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-04",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "not_found_handling": "single-page-application"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rslauncher-whitelist",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "SESSION_TTL_SECONDS": "43200"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

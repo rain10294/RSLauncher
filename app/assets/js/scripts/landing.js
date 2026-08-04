@@ -31,6 +31,7 @@ const {
 const DiscordWrapper          = require('./assets/js/discordwrapper')
 const NeoForgeInstaller       = require('./assets/js/neoforgeinstaller')
 const ProcessBuilder          = require('./assets/js/processbuilder')
+const WhitelistManager        = require('./assets/js/whitelistmanager')
 
 // Launch Elements
 const launch_content          = document.getElementById('launch_content')
@@ -124,11 +125,68 @@ function setLaunchEnabled(val){
     document.getElementById('launch_button').disabled = !val
 }
 
+function getWhitelistFailureMessage(reason){
+    switch(reason){
+        case 'not_whitelisted':
+            return Lang.queryJS('landing.whitelist.notWhitelisted')
+        case 'server_not_found':
+            return Lang.queryJS('landing.whitelist.serverNotFound')
+        case 'server_disabled':
+            return Lang.queryJS('landing.whitelist.serverDisabled')
+        case 'account_unavailable':
+            return Lang.queryJS('landing.whitelist.accountUnavailable')
+        default:
+            return Lang.queryJS('landing.whitelist.denied')
+    }
+}
+
+async function ensureWhitelistAccess(server){
+    if(!WhitelistManager.isEnabled()){
+        return true
+    }
+
+    const account = ConfigManager.getSelectedAccount()
+    if(account == null || account.uuid == null){
+        showLaunchFailure(
+            Lang.queryJS('landing.whitelist.deniedTitle'),
+            Lang.queryJS('landing.whitelist.accountUnavailable')
+        )
+        return false
+    }
+
+    setLaunchDetails(Lang.queryJS('landing.whitelist.checking'))
+    toggleLaunchArea(true)
+    setLaunchPercentage(0, 100)
+
+    try {
+        const result = await WhitelistManager.checkAccess(server.rawServer.id, account.uuid)
+        if(result.allowed){
+            return true
+        }
+
+        showLaunchFailure(
+            Lang.queryJS('landing.whitelist.deniedTitle'),
+            getWhitelistFailureMessage(result.reason)
+        )
+        return false
+    } catch(err) {
+        loggerLanding.error('Unable to verify launcher whitelist access.', err)
+        showLaunchFailure(
+            Lang.queryJS('landing.whitelist.unavailableTitle'),
+            Lang.queryJS('landing.whitelist.unavailable')
+        )
+        return false
+    }
+}
+
 // Bind launch button
 document.getElementById('launch_button').addEventListener('click', async e => {
     loggerLanding.info('Launching game..')
     try {
         const server = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
+        if(!await ensureWhitelistAccess(server)){
+            return
+        }
         const jExe = ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())
         if(jExe == null){
             await asyncSystemScan(server.effectiveJavaOptions)

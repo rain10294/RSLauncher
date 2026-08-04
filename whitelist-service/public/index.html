@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>RSLauncher 화이트리스트</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main>
+      <section id="loginView" class="login-view">
+        <div class="login-card">
+          <div class="brand-mark" aria-hidden="true">RS</div>
+          <p class="eyebrow">RSLAUNCHER</p>
+          <h1>화이트리스트 관리</h1>
+          <p class="muted">관리자 비밀번호로 로그인해 서버별 플레이 권한을 관리합니다.</p>
+
+          <form id="loginForm">
+            <label for="password">관리자 비밀번호</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <button class="primary full" type="submit">로그인</button>
+          </form>
+          <p id="loginMessage" class="form-message" role="alert"></p>
+        </div>
+      </section>
+
+      <section id="dashboardView" class="dashboard" hidden>
+        <header class="topbar">
+          <div class="brand-row">
+            <div class="brand-mark small" aria-hidden="true">RS</div>
+            <div>
+              <p class="eyebrow">RSLAUNCHER</p>
+              <h1>화이트리스트 관리</h1>
+            </div>
+          </div>
+          <button id="logoutButton" class="ghost" type="button">로그아웃</button>
+        </header>
+
+        <div class="workspace">
+          <aside class="server-panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">SERVERS</p>
+                <h2>서버</h2>
+              </div>
+              <button id="showCreateServerButton" class="icon-button" type="button" aria-label="서버 추가">+</button>
+            </div>
+            <div id="serverList" class="server-list"></div>
+          </aside>
+
+          <section class="content-panel">
+            <div id="emptyServer" class="empty-state">
+              <span class="empty-icon">+</span>
+              <h2>관리할 서버를 추가하세요</h2>
+              <p>왼쪽의 + 버튼을 눌러 첫 서버를 만들 수 있습니다.</p>
+            </div>
+
+            <div id="serverDetail" hidden>
+              <div class="server-header">
+                <div>
+                  <div class="title-line">
+                    <h2 id="selectedServerName"></h2>
+                    <span id="selectedServerStatus" class="status"></span>
+                  </div>
+                  <p id="selectedServerDescription" class="muted"></p>
+                  <div class="server-code-row">
+                    <span>런처 서버 코드</span>
+                    <code id="selectedServerCode"></code>
+                    <button id="copyServerCodeButton" class="text-button" type="button">복사</button>
+                  </div>
+                </div>
+                <div class="header-actions">
+                  <button id="editServerButton" class="ghost" type="button">정보 수정</button>
+                  <button id="toggleServerButton" class="ghost" type="button"></button>
+                  <button id="deleteServerButton" class="danger-ghost" type="button">서버 삭제</button>
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <article class="stat-card">
+                  <span>전체 등록</span>
+                  <strong id="totalEntryCount">0</strong>
+                </article>
+                <article class="stat-card accent">
+                  <span>플레이 가능</span>
+                  <strong id="enabledEntryCount">0</strong>
+                </article>
+              </div>
+
+              <section class="entry-section">
+                <div class="section-heading entry-heading">
+                  <div>
+                    <p class="eyebrow">PLAYERS</p>
+                    <h2>등록된 플레이어</h2>
+                  </div>
+                  <input id="entrySearch" class="search" type="search" placeholder="아이디, UUID, 메모 검색">
+                </div>
+
+                <form id="addEntryForm" class="entry-form">
+                  <div>
+                    <label for="minecraftUsername">마인크래프트 아이디</label>
+                    <input id="minecraftUsername" name="username" maxlength="16" placeholder="예: Notch" required>
+                  </div>
+                  <div class="note-field">
+                    <label for="entryNote">메모 <span>(선택)</span></label>
+                    <input id="entryNote" name="note" maxlength="120" placeholder="예: 디스코드 닉네임">
+                  </div>
+                  <button class="primary" type="submit">UUID 조회 후 추가</button>
+                </form>
+
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>마인크래프트 아이디</th>
+                        <th>UUID</th>
+                        <th>메모</th>
+                        <th>상태</th>
+                        <th><span class="sr-only">관리</span></th>
+                      </tr>
+                    </thead>
+                    <tbody id="entryTableBody"></tbody>
+                  </table>
+                  <div id="emptyEntries" class="table-empty">아직 등록된 플레이어가 없습니다.</div>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="serverDialog">
+      <form id="serverForm" method="dialog">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">SERVER</p>
+            <h2 id="serverDialogTitle">서버 추가</h2>
+          </div>
+          <button id="closeServerDialogButton" class="icon-button close" type="button" aria-label="닫기">×</button>
+        </div>
+        <input id="serverEditId" type="hidden">
+        <label for="serverName">서버 이름</label>
+        <input id="serverName" maxlength="60" placeholder="예: RS Cobblemon" required>
+        <div id="serverCodeGroup">
+          <label for="serverCode">서버 코드</label>
+          <input id="serverCode" maxlength="32" pattern="[a-z0-9][a-z0-9_-]{1,31}" placeholder="예: cobblemon" required>
+          <p class="field-help">영문 소문자·숫자·_·-만 사용할 수 있으며 만든 뒤에는 바뀌지 않습니다.</p>
+        </div>
+        <label for="serverDescription">설명 <span>(선택)</span></label>
+        <textarea id="serverDescription" maxlength="240" rows="3" placeholder="관리용 설명"></textarea>
+        <div class="dialog-actions">
+          <button id="cancelServerDialogButton" class="ghost" type="button">취소</button>
+          <button class="primary" type="submit">저장</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

@@ -165,6 +165,17 @@ noAccountSelected = "No Account Selected"
 noSelection = "No Server Selected"
 loading = "Loading.."
 
+[js.landing.whitelist]
+checking = "화이트리스트 권한을 확인하는 중..."
+deniedTitle = "런처 실행 권한이 없습니다"
+notWhitelisted = "선택한 서버의 화이트리스트에 등록되지 않은 마인크래프트 계정입니다. 관리자에게 마인크래프트 아이디 등록을 요청해 주세요."
+serverNotFound = "선택한 서버가 화이트리스트 관리 사이트에 아직 등록되지 않았습니다."
+serverDisabled = "관리자가 이 서버의 화이트리스트 검사를 일시 중지했습니다."
+accountUnavailable = "먼저 Microsoft 마인크래프트 계정으로 로그인해 주세요."
+denied = "이 마인크래프트 계정은 선택한 서버를 실행할 수 없습니다."
+unavailableTitle = "런처 실행 권한을 확인할 수 없습니다"
+unavailable = "화이트리스트 서버에 연결하지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도해 주세요."
+
 [js.landing.serverStatus]
 server = "SERVER"
 offline = "OFFLINE"
