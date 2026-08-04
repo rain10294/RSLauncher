@@ -77,6 +77,7 @@ async function showMainUI(data){
         const isLoggedIn = Object.keys(ConfigManager.getAuthAccounts()).length > 0
         const uiPreview = isDev ? process.env.RSLAUNCHER_UI_PREVIEW : null
         const previewLanding = uiPreview === 'landing' || uiPreview === 'progress'
+        const previewSettings = uiPreview != null && uiPreview.startsWith('settings')
 
         // If this is enabled in a development environment we'll get ratelimited.
         // The relaunch frequency is usually far too high.
@@ -84,7 +85,21 @@ async function showMainUI(data){
             validateSelectedAccount()
         }
 
-        if(isLoggedIn || previewLanding){
+        if(previewSettings){
+            currentView = VIEWS.settings
+            $(VIEWS.settings).fadeIn(1000)
+            const previewSettingsTabs = {
+                'settings-minecraft': 'settingsTabMinecraft',
+                'settings-mods': 'settingsTabMods',
+                'settings-java': 'settingsTabJava',
+                'settings-launcher': 'settingsTabLauncher',
+                'settings-about': 'settingsTabAbout'
+            }
+            const previewSettingsTab = previewSettingsTabs[uiPreview]
+            if(previewSettingsTab != null){
+                settingsNavItemListener(document.querySelector(`[rSc="${previewSettingsTab}"]`), false)
+            }
+        } else if(isLoggedIn || previewLanding){
             currentView = VIEWS.landing
             $(VIEWS.landing).fadeIn(1000)
             if(uiPreview === 'progress'){

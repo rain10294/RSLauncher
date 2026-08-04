@@ -4998,6 +4998,225 @@ body {
     text-shadow: none;
 }
 
+/* Text and spacing alignment polish */
+#frameTitleDock,
+#user_content,
+#launch_details,
+#launch_details_left,
+.settingsAuthAccountTypeHeaderLeft,
+.settingsFieldRight,
+.settingsFileSelActions,
+#settingsGameResolutionContent {
+    align-items: center;
+}
+
+#frameTitleText,
+#rsLandingServerName,
+#rsLastPlayed,
+#user_text,
+#server_selection_button,
+#launch_button,
+#launch_progress_label,
+#launch_details_text,
+.loginOptionButton,
+.settingsNavItem,
+#settingsNavDone,
+.settingsFieldTitle,
+.settingsFieldDesc,
+.settingsFileSelTitle,
+.settingsFileSelDesc,
+.settingsAuthAccountTypeHeader,
+.settingsMemoryHeader,
+.settingsMemoryStatusTitle,
+.settingsMemoryStatusValue {
+    line-height: 1.35;
+}
+
+#rsLandingHero,
+#rsLandingServerName,
+#rsLastPlayed,
+#server_selection_button,
+.settingsTab,
+.settingsTabHeader,
+.settingsFieldContainer,
+.settingsFileSelContainer,
+.settingsAuthAccountTypeContainer,
+.settingsSelServContainer,
+#settingsGameResolutionContainer,
+#settingsMemoryContainer,
+#settingsJVMOptsContainer {
+    text-align: left;
+}
+
+#user_content {
+    left: calc(clamp(42px, 4vw, 58px) + 104px);
+    gap: 8px;
+}
+
+#user_text {
+    max-width: 136px;
+    line-height: 1.3;
+}
+
+#rsLastPlayed {
+    min-height: 27px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+#server_selection_button {
+    align-items: center;
+    max-width: 104px;
+    min-height: 27px;
+    line-height: 1;
+}
+
+#launch_button,
+.loginOptionButton {
+    line-height: 1;
+}
+
+#launch_progress_label {
+    text-align: center;
+}
+
+#launch_details_text {
+    overflow: hidden;
+    line-height: 1.3;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.settingsNavItem,
+#settingsNavDone {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.settingsNavItem {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+#settingsNavDone {
+    justify-content: center;
+}
+
+.settingsTabHeader {
+    align-items: flex-start;
+}
+
+.settingsTabHeaderText {
+    line-height: 1.25;
+}
+
+.settingsTabHeaderDesc {
+    margin-top: 5px;
+}
+
+.settingsFieldContainer {
+    min-height: 66px;
+}
+
+.settingsFieldLeft {
+    flex: 1;
+    min-width: 0;
+    padding-right: 24px;
+}
+
+.settingsFieldRight {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
+}
+
+.settingsFieldTitle,
+.settingsFileSelTitle {
+    line-height: 1.4;
+}
+
+.settingsFieldDesc {
+    margin-top: 4px;
+}
+
+.settingsSelServContainer,
+.settingsFileSelContainer,
+.settingsAuthAccountTypeContainer,
+#settingsGameResolutionContainer,
+#settingsMemoryContainer,
+#settingsJVMOptsContainer {
+    box-sizing: border-box;
+}
+
+.settingsSelServContent {
+    min-width: 0;
+    padding: 12px 16px;
+}
+
+.settingsSwitchServerContainer {
+    flex: 0 0 auto;
+    padding: 12px 16px;
+}
+
+.settingsAuthAccountTypeHeader {
+    min-height: 54px;
+    margin-bottom: 0;
+    padding: 12px 16px;
+    box-sizing: border-box;
+}
+
+.settingsAuthAccountTypeHeaderLeft {
+    gap: 9px;
+}
+
+.settingsAddAuthAccount,
+.settingsFileSelButton,
+.settingsSwitchServerButton,
+.settingsAboutButton,
+#settingsDropinFileSystemButton,
+#settingsShaderpackButton,
+#settingsUpdateActionButton {
+    line-height: 1.3;
+}
+
+.settingsAddAuthAccount {
+    padding: 7px 10px;
+    text-align: center;
+}
+
+.settingsCurrentAccounts {
+    margin-bottom: 0;
+    padding: 14px 16px;
+}
+
+.settingsCurrentAccounts:empty {
+    display: none;
+}
+
+.settingsFileSelContainer,
+#settingsGameResolutionContainer,
+#settingsMemoryContainer,
+#settingsJVMOptsContainer {
+    padding: 14px 16px 16px;
+}
+
+.settingsFileSelActions,
+#settingsJVMOptsContent {
+    width: 100%;
+}
+
+.settingsFileSelDesc,
+#settingsJVMOptsDesc {
+    width: 100%;
+    margin: 12px 0 0;
+}
+
+#settingsMemoryContentRight {
+    margin-right: 16px;
+}
+
 @keyframes rsLandingEnter {
     from {
         opacity: 0;
