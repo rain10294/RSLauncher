@@ -14,7 +14,8 @@ const { LoggerUtil }         = require('helios-core')
 const { RestResponseStatus } = require('helios-core/common')
 const { MojangRestAPI, MojangErrorCode } = require('helios-core/mojang')
 const { MicrosoftAuth, MicrosoftErrorCode } = require('helios-core/microsoft')
-const { AZURE_CLIENT_ID }    = require('./ipcconstants')
+const { ipcRenderer }        = require('electron')
+const { AZURE_CLIENT_ID, MSFT_OPCODE } = require('./ipcconstants')
 const Lang = require('./langloader')
 
 const log = LoggerUtil.getLogger('AuthManager')
@@ -267,6 +268,26 @@ exports.addMicrosoftAccount = async function(authCode) {
 }
 
 /**
+ * Store the final Minecraft session produced by CmlLib.Core.Auth.Microsoft.
+ * Refresh credentials remain in the CmlLib account file managed by the main process.
+ */
+exports.addMicrosoftAccountFromCml = async function(account, accountFile) {
+    if(!account || !account.uuid || !account.username || !account.accessToken || !accountFile) {
+        throw new Error('CmlLib returned an incomplete Microsoft account.')
+    }
+
+    const ret = ConfigManager.addCmlMicrosoftAuthAccount(
+        account.uuid,
+        account.accessToken,
+        account.username,
+        account.expiresAt,
+        accountFile
+    )
+    ConfigManager.save()
+    return ret
+}
+
+/**
  * Remove a Mojang account. This will invalidate the access token associated
  * with the account and then remove it from the database.
  * 
@@ -360,6 +381,32 @@ async function validateSelectedMicrosoftAccount(){
 
     if(!mcExpired) {
         return true
+    }
+
+    if(current.authProvider === 'cmllib') {
+        try {
+            const response = await ipcRenderer.invoke(MSFT_OPCODE.CML_REFRESH, {
+                uuid: current.uuid,
+                accountFile: current.cml?.accountFile
+            })
+            if(!response?.success || !response.account) {
+                log.error('CmlLib failed to refresh the selected Microsoft account.')
+                return false
+            }
+
+            ConfigManager.updateCmlMicrosoftAuthAccount(
+                current.uuid,
+                response.account.accessToken,
+                response.account.username,
+                response.account.expiresAt,
+                current.cml.accountFile
+            )
+            ConfigManager.save()
+            return true
+        } catch(err) {
+            log.error('CmlLib failed to refresh the selected Microsoft account.', err)
+            return false
+        }
     }
 
     // MC token expired. Check MS token.

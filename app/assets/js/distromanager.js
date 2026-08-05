@@ -16,11 +16,19 @@ const localDistroPath = path.join(launcherDirectory, 'distribution.json')
 const localDevDistroPath = path.join(launcherDirectory, 'distribution_dev.json')
 
 fs.ensureDirSync(launcherDirectory)
-if(!fs.existsSync(localDistroPath)) {
+if(!hasRemoteDistribution) {
+    // The bundled file is the source of truth when no remote distribution is
+    // configured. Refresh both caches on every launcher start so an updated
+    // launcher never keeps showing a distribution from an older installation.
     fs.copyFileSync(bundledDistroPath, localDistroPath)
-}
-if(!fs.existsSync(localDevDistroPath)) {
     fs.copyFileSync(bundledDistroPath, localDevDistroPath)
+} else {
+    if(!fs.existsSync(localDistroPath)) {
+        fs.copyFileSync(bundledDistroPath, localDistroPath)
+    }
+    if(!fs.existsSync(localDevDistroPath)) {
+        fs.copyFileSync(bundledDistroPath, localDevDistroPath)
+    }
 }
 
 exports.REMOTE_DISTRO_URL = hasRemoteDistribution

@@ -9,11 +9,14 @@ const isDev                             = require('./app/assets/js/isdev')
 const path                              = require('path')
 const semver                            = require('semver')
 const { pathToFileURL }                 = require('url')
-const { AZURE_CLIENT_ID, UPDATE_URL, AUTO_UPDATE_ENABLED, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE } = require('./app/assets/js/ipcconstants')
+const { AZURE_CLIENT_ID, USE_CMLLIB_DEFAULT_CLIENT, UPDATE_URL, AUTO_UPDATE_ENABLED, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE } = require('./app/assets/js/ipcconstants')
 const LangLoader                        = require('./app/assets/js/langloader')
+const { CmlLibAuthService }             = require('./app/assets/js/cmllibauth')
 
 // Avoid colliding with older launchers which already use %APPDATA%/rslauncher.
 app.setPath('userData', path.join(app.getPath('appData'), 'RSLauncherHelios'))
+const cmlLibAuth = new CmlLibAuthService(app, __dirname)
+const microsoftAuthClientId = USE_CMLLIB_DEFAULT_CLIENT ? null : AZURE_CLIENT_ID
 
 // Setup Lang
 LangLoader.setupLanguage()
@@ -126,71 +129,68 @@ ipcMain.handle(SHELL_OPCODE.TRASH_ITEM, async (event, ...args) => {
 app.disableHardwareAcceleration()
 
 
-const REDIRECT_URI_PREFIX = 'https://login.microsoftonline.com/common/oauth2/nativeclient?'
-
 // Microsoft Auth Login
-let msftAuthWindow
-let msftAuthSuccess
-let msftAuthViewSuccess
-let msftAuthViewOnClose
-ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, (ipcEvent, ...arguments_) => {
-    if (!AZURE_CLIENT_ID) {
+let msftAuthInProgress = false
+ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, async (ipcEvent, ...arguments_) => {
+    if (!USE_CMLLIB_DEFAULT_CLIENT && !AZURE_CLIENT_ID) {
         ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.ERROR, MSFT_ERROR.CONFIG_REQUIRED, arguments_[1])
         return
     }
-    if (msftAuthWindow) {
-        ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.ERROR, MSFT_ERROR.ALREADY_OPEN, msftAuthViewOnClose)
+    if (msftAuthInProgress) {
+        ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.ERROR, MSFT_ERROR.ALREADY_OPEN, arguments_[1])
         return
     }
-    msftAuthSuccess = false
-    msftAuthViewSuccess = arguments_[0]
-    msftAuthViewOnClose = arguments_[1]
-    msftAuthWindow = new BrowserWindow({
-        title: LangLoader.queryJS('index.microsoftLoginTitle'),
-        backgroundColor: '#222222',
-        width: 520,
-        height: 600,
-        frame: true,
-        icon: getPlatformIcon('RSIcon')
-    })
+    msftAuthInProgress = true
+    try {
+        const result = await cmlLibAuth.login(microsoftAuthClientId)
+        ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.SUCCESS, {
+            cmlAccount: result.account,
+            accountFile: result.accountFile
+        }, arguments_[0])
+    } catch(error) {
+        const errorCode = error.code === 'cancelled' ? MSFT_ERROR.NOT_FINISHED : (error.code || MSFT_ERROR.AUTH_FAILED)
+        ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.ERROR, errorCode, arguments_[1], error.message)
+    } finally {
+        msftAuthInProgress = false
+    }
+})
 
-    msftAuthWindow.on('closed', () => {
-        msftAuthWindow = undefined
-    })
-
-    msftAuthWindow.on('close', () => {
-        if(!msftAuthSuccess) {
-            ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.ERROR, MSFT_ERROR.NOT_FINISHED, msftAuthViewOnClose)
+ipcMain.handle(MSFT_OPCODE.CML_REFRESH, async (_, data) => {
+    try {
+        const account = await cmlLibAuth.refresh(microsoftAuthClientId, data.uuid, data.accountFile)
+        return { success: true, account }
+    } catch(error) {
+        return {
+            success: false,
+            error: {
+                code: error.code || MSFT_ERROR.AUTH_FAILED,
+                message: error.message
+            }
         }
-    })
-
-    msftAuthWindow.webContents.on('did-navigate', (_, uri) => {
-        if (uri.startsWith(REDIRECT_URI_PREFIX)) {
-            let queryMap = {}
-            
-            new URL(uri).searchParams.forEach((v, k) => {
-                queryMap[k] = v
-            })
-
-            ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.SUCCESS, queryMap, msftAuthViewSuccess)
-
-            msftAuthSuccess = true
-            msftAuthWindow.close()
-            msftAuthWindow = null
-        }
-    })
-
-    msftAuthWindow.removeMenu()
-    msftAuthWindow.loadURL(`https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?prompt=select_account&client_id=${AZURE_CLIENT_ID}&response_type=code&scope=XboxLive.signin%20offline_access&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient`)
+    }
 })
 
 // Microsoft Auth Logout
 let msftLogoutWindow
 let msftLogoutSuccess
 let msftLogoutSuccessSent
-ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
-    if (msftLogoutWindow) {
+let msftLogoutInProgress = false
+ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, async (ipcEvent, uuid, isLastAccount, accountFile) => {
+    if (msftLogoutWindow || msftLogoutInProgress) {
         ipcEvent.reply(MSFT_OPCODE.REPLY_LOGOUT, MSFT_REPLY_TYPE.ERROR, MSFT_ERROR.ALREADY_OPEN)
+        return
+    }
+
+    if(accountFile) {
+        msftLogoutInProgress = true
+        try {
+            await cmlLibAuth.logout(microsoftAuthClientId, uuid, accountFile)
+            ipcEvent.reply(MSFT_OPCODE.REPLY_LOGOUT, MSFT_REPLY_TYPE.SUCCESS, uuid, isLastAccount)
+        } catch(error) {
+            ipcEvent.reply(MSFT_OPCODE.REPLY_LOGOUT, MSFT_REPLY_TYPE.ERROR, error.code || MSFT_ERROR.AUTH_FAILED)
+        } finally {
+            msftLogoutInProgress = false
+        }
         return
     }
 

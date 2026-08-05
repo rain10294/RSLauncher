@@ -22,7 +22,7 @@ npm run db:migrate:remote
 npm run secrets:configure
 ```
 
-`npm run secrets:configure`를 실행하면 원하는 비밀번호를 두 번 숨김 입력합니다. 비밀번호는 8자 이상이어야 합니다. 평문 비밀번호는 소스나 GitHub에 저장하지 않으며, 해시만 Cloudflare Secret에 들어갑니다.
+Windows에서는 `powershell -File scripts/configure-secrets.ps1`을 실행하면 원하는 비밀번호를 두 번 안전하게 입력하고 실제 사이트 로그인까지 확인합니다. 비밀번호는 8자 이상이어야 합니다. 비밀번호는 소스·GitHub·D1에 저장하지 않으며 Cloudflare의 암호화 Secret에만 들어갑니다.
 
 배포가 끝나면 Wrangler가 표시하는 `https://rslauncher-whitelist.<계정>.workers.dev` 주소가 관리자 사이트이자 API 기본 주소입니다.
 
@@ -35,7 +35,7 @@ npm test
 npm run dev
 ```
 
-로컬 관리자 로그인을 시험하려면 `.dev.vars`에 `ADMIN_PASSWORD_HASH`, `SESSION_SECRET`을 넣을 수 있습니다. `.dev.vars`는 Git에서 제외됩니다.
+로컬 관리자 로그인을 시험하려면 `.dev.vars`에 `ADMIN_PASSWORD`, `SESSION_SECRET`을 넣을 수 있습니다. `.dev.vars`는 Git에서 제외됩니다.
 
 ## 런처 검사 요청
 

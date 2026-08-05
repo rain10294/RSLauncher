@@ -1,6 +1,6 @@
 {
   "name": "rslauncher",
-  "version": "1.0.6",
+  "version": "1.0.9",
   "productName": "RSLauncher",
   "description": "RSLauncher - Helios 기반 Minecraft 런처",
   "author": "RSLauncher contributors",
@@ -10,6 +10,8 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
+    "build:auth-helper": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-auth-helper.ps1",
+    "predist": "npm run build:auth-helper",
     "dist": "electron-builder build",
     "dist:win": "npm run dist -- -w",
     "dist:mac": "npm run dist -- -m",

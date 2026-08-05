@@ -4,14 +4,10 @@ on: push
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     permissions:
       contents: write
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: Check out Git repository
@@ -21,6 +17,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
 
       - name: Set up Python
         uses: actions/setup-python@v6

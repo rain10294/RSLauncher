@@ -83,6 +83,28 @@ export async function verifyPassword(password, storedHash) {
   }
 }
 
+async function digestSecret(value) {
+  return new Uint8Array(
+    await crypto.subtle.digest('SHA-256', encoder.encode(value.normalize('NFC')))
+  )
+}
+
+export async function verifySecretPassword(password, storedPassword) {
+  if (
+    typeof password !== 'string' ||
+    typeof storedPassword !== 'string' ||
+    password.length < 8 ||
+    password.length > 256
+  ) {
+    return false
+  }
+
+  return safeEqual(
+    await digestSecret(password),
+    await digestSecret(storedPassword)
+  )
+}
+
 async function sign(value, secret) {
   const key = await crypto.subtle.importKey(
     'raw',

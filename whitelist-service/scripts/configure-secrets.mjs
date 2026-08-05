@@ -1,7 +1,6 @@
 import { spawnSync } from 'node:child_process'
 import { randomBytes, webcrypto } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
-import { hashPassword } from '../src/auth.js'
 
 if (!globalThis.crypto) globalThis.crypto = webcrypto
 
@@ -77,10 +76,42 @@ function putSecret(name, value) {
   if (result.status !== 0) process.exit(result.status || 1)
 }
 
-console.log('관리자 비밀번호를 안전한 해시로 변환하고 있습니다...')
-putSecret('ADMIN_PASSWORD_HASH', await hashPassword(password))
+async function verifyRemoteLogin(passwordToVerify) {
+  const baseUrl = (process.env.RS_WHITELIST_ADMIN_URL || 'https://rslauncher-whitelist.rain10294.workers.dev')
+    .replace(/\/+$/u, '')
+  let invalidPasswordResponses = 0
+  let lastError = 'unknown'
+
+  for (let attempt = 1; attempt <= 10; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, attempt === 1 ? 5000 : 2000))
+    const response = await fetch(`${baseUrl}/api/admin/login`, {
+      method: 'POST',
+      headers: {
+        Origin: baseUrl,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password: passwordToVerify })
+    })
+    if (response.ok) return
+
+    const result = await response.json().catch(() => ({}))
+    lastError = result.error || String(response.status)
+    if (result.error === 'invalid_password') {
+      invalidPasswordResponses += 1
+      if (invalidPasswordResponses >= 2) break
+    } else if (!['service_not_configured', 'internal_error'].includes(result.error)) {
+      break
+    }
+  }
+  throw new Error(`저장된 비밀번호로 실제 사이트에 로그인하지 못했습니다. (${lastError})`)
+}
+
+console.log('관리자 비밀번호를 Cloudflare 암호화 Secret에 저장하고 있습니다...')
+putSecret('ADMIN_PASSWORD', password.normalize('NFC'))
 
 console.log('로그인 세션 암호화 키를 만들고 있습니다...')
 putSecret('SESSION_SECRET', randomBytes(48).toString('base64url'))
 
-console.log('Cloudflare Secret 설정이 완료되었습니다.')
+console.log('실제 관리자 사이트 로그인을 확인하고 있습니다...')
+await verifyRemoteLogin(password)
+console.log('Cloudflare Secret 설정과 실제 로그인 검증이 완료되었습니다.')

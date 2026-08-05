@@ -4,6 +4,7 @@ import test from 'node:test'
 import {
   createSessionToken,
   hashPassword,
+  verifySecretPassword,
   verifyPassword,
   verifySessionToken
 } from '../src/auth.js'
@@ -27,4 +28,9 @@ test('서명된 세션은 만료 전까지만 유효하다', async () => {
 
 test('짧은 비밀번호를 거부한다', async () => {
   await assert.rejects(() => hashPassword('short'), /8~256/u)
+})
+
+test('Cloudflare Secret 비밀번호를 고정 길이 다이제스트로 비교한다', async () => {
+  assert.equal(await verifySecretPassword('관리자-password-123', '관리자-password-123'), true)
+  assert.equal(await verifySecretPassword('관리자-password-123', '다른-password-123'), false)
 })

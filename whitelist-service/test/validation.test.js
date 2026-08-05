@@ -47,3 +47,30 @@ test('존재하지 않는 Mojang 프로필을 구분한다', async () => {
     error: 'minecraft_account_not_found'
   })
 })
+
+test('Mojang이 Cloudflare 요청을 차단하면 PlayerDB로 조회한다', async () => {
+  const requestedUrls = []
+  const fakeFetch = async (url) => {
+    requestedUrls.push(url)
+    if (url.startsWith('https://api.mojang.com/')) {
+      return new Response('The request is blocked.', { status: 403 })
+    }
+    return new Response(JSON.stringify({
+      success: true,
+      data: {
+        player: {
+          raw_id: '069a79f444e94726a5befca90e38afcb',
+          username: 'Notch'
+        }
+      }
+    }), { status: 200 })
+  }
+
+  assert.deepEqual(await resolveMinecraftProfile('Notch', fakeFetch), {
+    ok: true,
+    uuid: '069a79f444e94726a5befca90e38afcb',
+    username: 'Notch'
+  })
+  assert.equal(requestedUrls.length, 2)
+  assert.match(requestedUrls[1], /^https:\/\/playerdb\.co\/api\/player\/minecraft\/Notch$/u)
+})

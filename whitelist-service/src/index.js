@@ -1,4 +1,4 @@
-import { createSessionToken, verifyPassword, verifySessionToken } from './auth.js'
+import { createSessionToken, verifySecretPassword, verifySessionToken } from './auth.js'
 import { resolveMinecraftProfile } from './mojang.js'
 import {
   cleanBoolean,
@@ -80,7 +80,7 @@ function expiredSessionCookie() {
 }
 
 function isConfigured(env) {
-  return Boolean(env.ADMIN_PASSWORD_HASH && env.SESSION_SECRET && env.SESSION_SECRET.length >= 32)
+  return Boolean(env.ADMIN_PASSWORD && env.SESSION_SECRET && env.SESSION_SECRET.length >= 32)
 }
 
 async function isAuthenticated(request, env) {
@@ -149,7 +149,7 @@ async function handleLogin(request, env) {
     return errorResponse('too_many_attempts', 429, { retryAfterSeconds: LOGIN_WINDOW_SECONDS })
   }
 
-  if (!(await verifyPassword(body.password, env.ADMIN_PASSWORD_HASH))) {
+  if (!(await verifySecretPassword(body.password, env.ADMIN_PASSWORD))) {
     await recordLoginFailure(env.DB, ip, now)
     return errorResponse('invalid_password', 401)
   }

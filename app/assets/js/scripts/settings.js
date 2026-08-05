@@ -363,7 +363,6 @@ ipcRenderer.on(MSFT_OPCODE.REPLY_LOGIN, (_, ...arguments_) => {
     if (arguments_[0] === MSFT_REPLY_TYPE.ERROR) {
 
         const viewOnClose = arguments_[2]
-        console.log(arguments_)
         switchView(getCurrentView(), viewOnClose, 500, 500, () => {
 
             if(arguments_[1] === MSFT_ERROR.NOT_FINISHED) {
@@ -375,7 +374,7 @@ ipcRenderer.on(MSFT_OPCODE.REPLY_LOGIN, (_, ...arguments_) => {
             // Unexpected error.
             setOverlayContent(
                 Lang.queryJS('settings.msftLogin.errorTitle'),
-                Lang.queryJS('settings.msftLogin.errorMessage'),
+                arguments_[3] || Lang.queryJS('settings.msftLogin.errorMessage'),
                 Lang.queryJS('settings.msftLogin.okButton')
             )
             setOverlayHandler(() => {
@@ -411,10 +410,12 @@ ipcRenderer.on(MSFT_OPCODE.REPLY_LOGIN, (_, ...arguments_) => {
             })
         } else {
 
-            msftLoginLogger.info('Acquired authCode, proceeding with authentication.')
+            const authentication = queryMap.cmlAccount
+                ? AuthManager.addMicrosoftAccountFromCml(queryMap.cmlAccount, queryMap.accountFile)
+                : AuthManager.addMicrosoftAccount(queryMap.code)
 
-            const authCode = queryMap.code
-            AuthManager.addMicrosoftAccount(authCode).then(value => {
+            msftLoginLogger.info('Microsoft authentication completed; storing the Minecraft session.')
+            authentication.then(value => {
                 updateSelectedAccount(value)
                 switchView(getCurrentView(), viewOnClose, 500, 500, async () => {
                     await prepareSettings()
@@ -516,7 +517,7 @@ function processLogOut(val, isLastAccount){
     if(targetAcc.type === 'microsoft') {
         msAccDomElementCache = parent
         switchView(getCurrentView(), VIEWS.waiting, 500, 500, () => {
-            ipcRenderer.send(MSFT_OPCODE.OPEN_LOGOUT, uuid, isLastAccount)
+            ipcRenderer.send(MSFT_OPCODE.OPEN_LOGOUT, uuid, isLastAccount, targetAcc.cml?.accountFile)
         })
     } else {
         AuthManager.removeMojangAccount(uuid).then(() => {

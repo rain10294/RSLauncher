@@ -402,6 +402,40 @@ exports.addMicrosoftAuthAccount = function(uuid, accessToken, name, mcExpires, m
 }
 
 /**
+ * Store an account authenticated by the bundled CmlLib helper. OAuth and Xbox
+ * refresh data stay in the helper's account file instead of launcher.json.
+ */
+exports.addCmlMicrosoftAuthAccount = function(uuid, accessToken, name, mcExpires, accountFile) {
+    const normalizedUuid = uuid.replaceAll('-', '').trim().toLowerCase()
+    config.selectedAccount = normalizedUuid
+    config.authenticationDatabase[normalizedUuid] = {
+        type: 'microsoft',
+        authProvider: 'cmllib',
+        accessToken,
+        username: name.trim(),
+        uuid: normalizedUuid,
+        displayName: name.trim(),
+        expiresAt: mcExpires,
+        cml: {
+            accountFile
+        }
+    }
+    return config.authenticationDatabase[normalizedUuid]
+}
+
+/** Update the Minecraft session returned by the CmlLib helper. */
+exports.updateCmlMicrosoftAuthAccount = function(uuid, accessToken, name, mcExpires, accountFile) {
+    const account = config.authenticationDatabase[uuid]
+    account.accessToken = accessToken
+    account.username = name.trim()
+    account.displayName = name.trim()
+    account.expiresAt = mcExpires
+    account.authProvider = 'cmllib'
+    account.cml = { accountFile }
+    return account
+}
+
+/**
  * Remove an authenticated account from the database. If the account
  * was also the selected account, a new one will be selected. If there
  * are no accounts, the selected account will be null.

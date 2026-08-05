@@ -15,10 +15,14 @@ publish:
     publishAutoUpdate: false
 
 files:
-  - '!{dist,dist-client-id,release,artifacts,profile-builder,whitelist-service,.gitignore,.vscode,docs,dev-app-update.yml,.nvmrc,eslint.config.mjs}'
+  - '!{dist,dist-client-id,release,artifacts,profile-builder,whitelist-service,auth-helper,scripts,.gitignore,.vscode,docs,dev-app-update.yml,.nvmrc,eslint.config.mjs}'
 
 extraResources:
   - 'libraries'
+  - from: 'auth-helper/publish'
+    to: 'auth-helper'
+    filter:
+      - '**/*'
 
 # Windows Configuration
 win: 
