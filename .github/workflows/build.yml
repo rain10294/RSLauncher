@@ -81,14 +81,17 @@ jobs:
         id: release
         shell: pwsh
         run: |
-          $version = "${{ steps.version.outputs.version }}"
-          $source = "dist/RSLauncher-setup-$version.exe"
           $asset = "dist/RSLauncher-setup-Windows.exe"
-          if (-not (Test-Path -LiteralPath $source)) {
-            throw "Windows installer was not created: $source"
+          $blockmap = "$asset.blockmap"
+          $metadata = "dist/latest.yml"
+          foreach ($requiredFile in @($asset, $blockmap, $metadata)) {
+            if (-not (Test-Path -LiteralPath $requiredFile)) {
+              throw "Auto-update file was not created: $requiredFile"
+            }
           }
-          Copy-Item -LiteralPath $source -Destination $asset -Force
           "asset=$asset" >> $env:GITHUB_OUTPUT
+          "blockmap=$blockmap" >> $env:GITHUB_OUTPUT
+          "metadata=$metadata" >> $env:GITHUB_OUTPUT
 
       - name: Record launcher version
         id: source
@@ -110,12 +113,14 @@ jobs:
           $tag = "${{ steps.version.outputs.tag }}"
           $version = "${{ steps.version.outputs.version }}"
           $asset = "${{ steps.release.outputs.asset }}"
+          $blockmap = "${{ steps.release.outputs.blockmap }}"
+          $metadata = "${{ steps.release.outputs.metadata }}"
           gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null
           if ($LASTEXITCODE -eq 0) {
-            gh release upload $tag $asset --clobber --repo $env:GITHUB_REPOSITORY
+            gh release upload $tag $asset $blockmap $metadata --clobber --repo $env:GITHUB_REPOSITORY
             gh release edit $tag --title "RSLauncher $version" --latest --repo $env:GITHUB_REPOSITORY
           } else {
-            gh release create $tag $asset `
+            gh release create $tag $asset $blockmap $metadata `
               --target "${{ steps.source.outputs.sha }}" `
               --title "RSLauncher $version" `
               --generate-notes `

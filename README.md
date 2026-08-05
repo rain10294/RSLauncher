@@ -33,7 +33,7 @@ Windows 설치 파일은 다음 명령으로 생성합니다.
 npm run dist:win
 ```
 
-결과물은 `dist/RSLauncher-setup-현재버전.exe`에 생성됩니다.
+결과물은 `dist/RSLauncher-setup-Windows.exe`에 생성됩니다.
 
 ## 운영 설정
 
@@ -41,11 +41,11 @@ npm run dist:win
 
 - `azureClientId`: Microsoft Entra 앱 등록의 Application (client) ID
 - `distributionUrl`: 운영용 Helios `distribution.json`의 HTTPS 주소
-- `updateUrl`: RSLauncher 전용 업데이트 서버의 HTTPS 주소. 비워두면 자동 업데이트가 꺼집니다.
+- `updateUrl`: RSLauncher 전용 업데이트 서버의 HTTPS 주소. 현재 공개 GitHub Release의 최신 다운로드 주소를 사용합니다.
 
 동일한 값은 빌드/실행 환경 변수 `RSLAUNCHER_AZURE_CLIENT_ID`, `RSLAUNCHER_DISTRIBUTION_URL`, `RSLAUNCHER_UPDATE_URL`로도 주입할 수 있습니다. 환경 변수가 설정 파일보다 우선합니다.
 
-RSLauncher 업데이트 서버가 준비되기 전에는 `updateUrl`을 비워두세요. 이 상태에서는 자동 업데이트 메뉴와 네트워크 확인이 비활성화되며, 원본 Helios 업데이트를 내려받지 않습니다.
+GitHub Actions는 런처 변경 시 버전을 올리고 Windows 설치파일, `latest.yml`, blockmap을 최신 GitHub Release에 게시합니다. 런처는 시작할 때 이 메타데이터를 확인하고 새 버전을 다운로드합니다.
 
 기본 번들 배포 인덱스는 Fabric 1.21.1/Loader 0.19.2와 RSLauncher 서버 주소를 포함한 실행 가능한 베이스 프로필입니다. 실제 Cobblemon 모드팩을 배포하려면 운영 인덱스에 모드, 리소스팩, 설정 파일을 `FabricMod` 또는 `File` 모듈로 추가하세요.
 

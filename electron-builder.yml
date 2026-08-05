@@ -1,18 +1,17 @@
 appId: 'kr.rslauncher.launcher'
 productName: 'RSLauncher'
-artifactName: '${productName}-setup-${version}.${ext}'
+artifactName: '${productName}-setup-Windows.${ext}'
 
 copyright: 'Copyright © 2026 RSLauncher contributors'
 
 asar: true
 compression: 'maximum'
 
-# Prevent electron-builder from inferring the upstream Helios Git remote.
-# Runtime updates remain disabled while launcher.json updateUrl is empty.
+# Generate electron-updater metadata for the public GitHub release feed.
 publish:
   - provider: 'generic'
-    url: 'https://updates.invalid/rslauncher/'
-    publishAutoUpdate: false
+    url: 'https://github.com/rain10294/RSLauncher/releases/latest/download/'
+    publishAutoUpdate: true
 
 files:
   - '!{dist,dist-client-id,release,artifacts,profile-builder,whitelist-service,auth-helper,scripts,.gitignore,.vscode,docs,dev-app-update.yml,.nvmrc,eslint.config.mjs}'

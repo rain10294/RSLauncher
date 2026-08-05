@@ -2,7 +2,7 @@
   "azureClientId": "ed3f9589-1bd1-4a5e-ada0-3feb339c2011",
   "microsoftAuthMode": "cmllib-default",
   "distributionUrl": "http://175.116.193.109:3000/distribution.json",
-  "updateUrl": "",
+  "updateUrl": "https://github.com/rain10294/RSLauncher/releases/latest/download/",
   "whitelist": {
     "enabled": true,
     "apiUrl": "https://rslauncher-whitelist.rain10294.workers.dev",
