@@ -184,8 +184,9 @@ document.getElementById('serverSelectConfirm').addEventListener('click', async (
     }
     // None are selected? Not possible right? Meh, handle it.
     if(listings.length > 0){
-        const serv = (await DistroAPI.getDistribution()).getServerById(listings[i].getAttribute('servid'))
+        const serv = (await DistroAPI.getDistribution()).getServerById(listings[0].getAttribute('servid'))
         updateSelectedServer(serv)
+        refreshServerStatus(true)
         toggleOverlay(false)
     }
 })
@@ -240,9 +241,11 @@ function setServerListingHandlers(){
             for(let i=0; i<cListings.length; i++){
                 if(cListings[i].hasAttribute('selected')){
                     cListings[i].removeAttribute('selected')
+                    cListings[i].setAttribute('aria-pressed', 'false')
                 }
             }
             val.setAttribute('selected', '')
+            val.setAttribute('aria-pressed', 'true')
             document.activeElement.blur()
         }
     })
@@ -267,36 +270,102 @@ function setAccountListingHandlers(){
     })
 }
 
+function escapeServerListingText(value){
+    return String(value == null ? '' : value)
+        .replace(/&/gu, '&amp;')
+        .replace(/</gu, '&lt;')
+        .replace(/>/gu, '&gt;')
+        .replace(/"/gu, '&quot;')
+        .replace(/'/gu, '&#039;')
+}
+
+function getServerLoaderLabel(serv){
+    const modules = Array.isArray(serv.modules) ? serv.modules : []
+    const rawModules = modules.map(module => module.rawModule || {})
+    if(rawModules.some(module => module.type === 'Forge' && String(module.id || '').startsWith('net.neoforged:neoforge:'))){
+        return 'NeoForge'
+    }
+    if(rawModules.some(module => module.type === 'Fabric')){
+        return 'Fabric'
+    }
+    if(rawModules.some(module => module.type === 'Forge')){
+        return 'Forge'
+    }
+    return 'Vanilla'
+}
+
+function isWhitelistServer(){
+    return typeof WhitelistManager !== 'undefined' && WhitelistManager.isEnabled()
+}
+
+function findServerListing(serverId){
+    return Array.from(document.getElementsByClassName('serverListing'))
+        .find(listing => listing.getAttribute('servid') === serverId)
+}
+
+async function refreshServerListingStatus(serv){
+    const listing = findServerListing(serv.rawServer.id)
+    const status = listing == null ? null : listing.querySelector('.serverListingStatus')
+    const statusText = status == null ? null : status.querySelector('.serverListingStatusText')
+    if(status == null || statusText == null){
+        return
+    }
+
+    try {
+        const servStat = await getServerStatus(47, serv.hostname, serv.port)
+        status.setAttribute('data-state', 'online')
+        statusText.textContent = `${Lang.queryJS('overlay.serverSelect.online')} · ${servStat.players.online}/${servStat.players.max}`
+    } catch (err) {
+        status.setAttribute('data-state', 'offline')
+        statusText.textContent = Lang.queryJS('overlay.serverSelect.offline')
+    }
+}
+
 async function populateServerListings(){
     const distro = await DistroAPI.getDistribution()
     const giaSel = ConfigManager.getSelectedServer()
     const servers = distro.servers
     let htmlString = ''
     for(const serv of servers){
-        htmlString += `<button class="serverListing" servid="${serv.rawServer.id}" ${serv.rawServer.id === giaSel ? 'selected' : ''}>
-            <img class="serverListingImg" src="${serv.rawServer.icon}"/>
-            <div class="serverListingDetails">
-                <span class="serverListingName">${serv.rawServer.name}</span>
-                <span class="serverListingDescription">${serv.rawServer.description}</span>
-                <div class="serverListingInfo">
-                    <div class="serverListingVersion">${serv.rawServer.minecraftVersion}</div>
-                    <div class="serverListingRevision">${serv.rawServer.version}</div>
-                    ${serv.rawServer.mainServer ? `<div class="serverListingStarWrapper">
-                        <svg id="Layer_1" viewBox="0 0 107.45 104.74" width="20px" height="20px">
-                            <defs>
-                                <style>.cls-1{fill:#fff;}.cls-2{fill:none;stroke:#fff;stroke-miterlimit:10;}</style>
-                            </defs>
-                            <path class="cls-1" d="M100.93,65.54C89,62,68.18,55.65,63.54,52.13c2.7-5.23,18.8-19.2,28-27.55C81.36,31.74,63.74,43.87,58.09,45.3c-2.41-5.37-3.61-26.52-4.37-39-.77,12.46-2,33.64-4.36,39-5.7-1.46-23.3-13.57-33.49-20.72,9.26,8.37,25.39,22.36,28,27.55C39.21,55.68,18.47,62,6.52,65.55c12.32-2,33.63-6.06,39.34-4.9-.16,5.87-8.41,26.16-13.11,37.69,6.1-10.89,16.52-30.16,21-33.9,4.5,3.79,14.93,23.09,21,34C70,86.84,61.73,66.48,61.59,60.65,67.36,59.49,88.64,63.52,100.93,65.54Z"/>
-                            <circle class="cls-2" cx="53.73" cy="53.9" r="38"/>
-                        </svg>
-                        <span class="serverListingStarTooltip">${Lang.queryJS('settings.serverListing.mainServer')}</span>
-                    </div>` : ''}
-                </div>
-            </div>
+        const rawServer = serv.rawServer
+        const selected = rawServer.id === giaSel
+        const serverName = escapeServerListingText(rawServer.name)
+        const serverIcon = String(rawServer.icon || '').trim()
+        const iconMarkup = serverIcon.length > 0
+            ? `<img class="serverListingImg" src="${escapeServerListingText(serverIcon)}" alt=""/>`
+            : `<span class="serverListingFallback" aria-hidden="true">${escapeServerListingText(String(rawServer.name || 'S').charAt(0).toUpperCase())}</span>`
+        const mainBadge = rawServer.mainServer
+            ? `<span class="serverListingBadge serverListingBadgeMain">${Lang.queryJS('overlay.serverSelect.main')}</span>`
+            : ''
+        const whitelistBadge = isWhitelistServer()
+            ? `<span class="serverListingBadge serverListingBadgeWhitelist">${Lang.queryJS('overlay.serverSelect.whitelist')}</span>`
+            : ''
+
+        htmlString += `<button class="serverListing" servid="${escapeServerListingText(rawServer.id)}" ${selected ? 'selected' : ''} aria-pressed="${selected}">
+            <span class="serverListingIcon">${iconMarkup}</span>
+            <span class="serverListingDetails">
+                <span class="serverListingTopline">
+                    <span class="serverListingName">${serverName}</span>
+                    <span class="serverListingStatus" data-state="checking">
+                        <i aria-hidden="true"></i>
+                        <span class="serverListingStatusText">${Lang.queryJS('overlay.serverSelect.checking')}</span>
+                    </span>
+                </span>
+                <span class="serverListingDescription">${escapeServerListingText(rawServer.description)}</span>
+                <span class="serverListingInfo">
+                    <span class="serverListingBadge">MC ${escapeServerListingText(rawServer.minecraftVersion)}</span>
+                    <span class="serverListingBadge">${getServerLoaderLabel(serv)}</span>
+                    ${mainBadge}
+                    ${whitelistBadge}
+                </span>
+            </span>
+            <span class="serverListingSelectedMark" aria-hidden="true">✓</span>
         </button>`
     }
     document.getElementById('serverSelectListScrollable').innerHTML = htmlString
-
+    for(const serv of servers){
+        void refreshServerListingStatus(serv)
+    }
 }
 
 function populateAccountListings(){

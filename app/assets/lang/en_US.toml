@@ -42,6 +42,7 @@ cancelButton = "Cancel"
 
 [ejs.overlay]
 serverSelectHeader = "Available Servers"
+serverSelectSubtitle = "Choose the server you want to play."
 serverSelectConfirm = "Select"
 serverSelectCancel = "Cancel"
 accountSelectHeader = "Select an Account"
@@ -230,6 +231,13 @@ joined = "Exploring the Realm!"
 
 [js.overlay]
 dismiss = "Dismiss"
+
+[js.overlay.serverSelect]
+checking = "Checking"
+online = "Online"
+offline = "Offline"
+main = "Main server"
+whitelist = "Whitelist"
 
 [js.settings.fileSelectors]
 executables = "Executables"

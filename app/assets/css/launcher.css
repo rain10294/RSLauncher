@@ -5250,3 +5250,508 @@ body {
         animation: none;
     }
 }
+
+/* Refined server picker. */
+#server_selection_button {
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    display: flex !important;
+    align-items: center;
+    width: 220px;
+    max-width: 220px !important;
+    height: 58px;
+    min-height: 58px;
+    padding: 9px 12px;
+    gap: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 9px;
+    background: rgba(7, 12, 9, 0.84);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    color: #fff;
+    line-height: 1;
+    text-align: left;
+    white-space: normal;
+    backdrop-filter: blur(12px);
+}
+
+#server_selection_button:hover,
+#server_selection_button:focus {
+    border-color: rgba(73, 185, 79, 0.62);
+    background: rgba(9, 17, 12, 0.93);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.27), 0 0 0 1px rgba(73, 185, 79, 0.10);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+#server_selection_button:active {
+    transform: translateY(0);
+}
+
+.serverSelectionDot {
+    flex: 0 0 auto;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #8b9590;
+    box-shadow: 0 0 0 4px rgba(139, 149, 144, 0.10);
+}
+
+#server_selection_button[data-status="online"] .serverSelectionDot {
+    background: #59d864;
+    box-shadow: 0 0 0 4px rgba(89, 216, 100, 0.12), 0 0 12px rgba(89, 216, 100, 0.55);
+}
+
+#server_selection_button[data-status="offline"] .serverSelectionDot {
+    background: #e06666;
+    box-shadow: 0 0 0 4px rgba(224, 102, 102, 0.11);
+}
+
+#server_selection_button[data-status="checking"] .serverSelectionDot {
+    animation: rsServerStatusPulse 1.35s ease-in-out infinite;
+}
+
+.serverSelectionCopy {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    gap: 5px;
+}
+
+.serverSelectionLabel {
+    color: rgba(226, 235, 229, 0.52);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+}
+
+#server_selection_name {
+    display: block;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.94);
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.serverSelectionChevron {
+    flex: 0 0 auto;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 16px;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+#serverSelectContent {
+    width: min(680px, calc(100% - 72px));
+    height: auto;
+    max-height: calc(100% - 64px);
+    padding: 26px 28px 24px;
+    box-sizing: border-box;
+    align-items: stretch;
+    justify-content: flex-start;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(17, 24, 20, 0.98), rgba(9, 14, 11, 0.98));
+    box-shadow: 0 26px 72px rgba(0, 0, 0, 0.50), inset 0 1px rgba(255, 255, 255, 0.025);
+    text-align: left;
+}
+
+#serverSelectHeading {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+#serverSelectHeader {
+    margin: 0;
+    color: #fff;
+    font-family: 'Avenir Medium';
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+#serverSelectSubtitle {
+    color: rgba(227, 236, 230, 0.58);
+    font-size: 11px;
+    font-weight: 550;
+    line-height: 1.35;
+}
+
+#serverSelectList {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    max-height: 330px;
+}
+
+#serverSelectListScrollable {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: 330px;
+    padding: 2px 8px 2px 2px;
+    gap: 10px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#serverSelectListScrollable::-webkit-scrollbar {
+    width: 4px;
+}
+
+#serverSelectListScrollable::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.20);
+    box-shadow: none;
+}
+
+#serverSelectListScrollable > .serverListing {
+    margin: 0 !important;
+}
+
+.serverListing {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 92px;
+    padding: 13px 52px 13px 13px;
+    gap: 14px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.035);
+    color: #fff;
+    cursor: pointer;
+    opacity: 1;
+    text-align: left;
+    transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.serverListing:hover,
+.serverListing:focus {
+    border-color: rgba(73, 185, 79, 0.40);
+    background: rgba(73, 185, 79, 0.065);
+    box-shadow: 0 9px 26px rgba(0, 0, 0, 0.18);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.serverListing[selected] {
+    border-color: rgba(83, 205, 91, 0.84);
+    background: linear-gradient(90deg, rgba(73, 185, 79, 0.13), rgba(73, 185, 79, 0.045));
+    box-shadow: 0 0 0 1px rgba(73, 185, 79, 0.09), 0 10px 28px rgba(0, 0, 0, 0.20);
+    cursor: default;
+}
+
+.serverListingIcon {
+    display: grid;
+    flex: 0 0 58px;
+    width: 58px;
+    height: 58px;
+    place-items: center;
+}
+
+.serverListingImg,
+.serverListingFallback {
+    display: grid;
+    width: 54px;
+    height: 54px;
+    margin: 0;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 9px;
+    background: linear-gradient(145deg, rgba(74, 184, 82, 0.90), rgba(31, 84, 43, 0.95));
+    color: #fff;
+    object-fit: cover;
+    place-items: center;
+    font-size: 21px;
+    font-weight: 850;
+    line-height: 54px;
+    text-align: center;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.20);
+}
+
+.serverListingDetails {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    min-width: 0;
+    height: auto;
+    gap: 6px;
+}
+
+.serverListingTopline {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 12px;
+}
+
+.serverListingName {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.96);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.serverListingStatus {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 6px;
+    color: rgba(229, 237, 232, 0.56);
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.serverListingStatus i {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #89928d;
+}
+
+.serverListingStatus[data-state="online"] {
+    color: #78df80;
+}
+
+.serverListingStatus[data-state="online"] i {
+    background: #59d864;
+    box-shadow: 0 0 8px rgba(89, 216, 100, 0.62);
+}
+
+.serverListingStatus[data-state="offline"] {
+    color: #de8181;
+}
+
+.serverListingStatus[data-state="offline"] i {
+    background: #df6b6b;
+}
+
+.serverListingStatus[data-state="checking"] i {
+    animation: rsServerStatusPulse 1.35s ease-in-out infinite;
+}
+
+.serverListingDescription {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    color: rgba(224, 233, 227, 0.56);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.serverListingInfo {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.serverListingBadge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 17px;
+    padding: 1px 6px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.045);
+    color: rgba(235, 241, 237, 0.69);
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.serverListingBadgeMain {
+    border-color: rgba(91, 206, 99, 0.30);
+    background: rgba(73, 185, 79, 0.12);
+    color: #80dd86;
+}
+
+.serverListingBadgeWhitelist {
+    border-color: rgba(224, 176, 77, 0.30);
+    background: rgba(224, 176, 77, 0.10);
+    color: #e5bf70;
+}
+
+.serverListingSelectedMark {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    display: grid;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background: var(--rs-accent);
+    box-shadow: 0 6px 16px rgba(40, 139, 47, 0.36);
+    color: #fff;
+    opacity: 0;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 900;
+    transform: translateY(-50%) scale(0.72);
+    transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.serverListing[selected] .serverListingSelectedMark {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+#serverSelectActions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 21px;
+    gap: 10px;
+}
+
+#serverSelectCancelWrapper {
+    display: block;
+}
+
+#serverSelectCancel,
+#serverSelectConfirm {
+    min-height: 36px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 750;
+    line-height: 34px;
+    text-align: center;
+    transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+#serverSelectCancel {
+    min-width: 82px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(238, 243, 240, 0.72);
+}
+
+#serverSelectCancel:hover,
+#serverSelectCancel:focus {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.075);
+    color: #fff;
+    outline: none;
+}
+
+#serverSelectConfirm {
+    min-width: 126px;
+    border: 1px solid var(--rs-accent);
+    background: var(--rs-accent);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(40, 139, 47, 0.25);
+}
+
+#serverSelectConfirm:hover,
+#serverSelectConfirm:focus {
+    border-color: var(--rs-accent-hover);
+    background: var(--rs-accent-hover);
+    box-shadow: 0 9px 24px rgba(40, 139, 47, 0.34);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+#serverSelectCancel:active,
+#serverSelectConfirm:active {
+    transform: translateY(0);
+}
+
+@keyframes rsServerStatusPulse {
+    0%, 100% {
+        opacity: 0.42;
+        transform: scale(0.86);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Keep supporting landing information clear of the larger server card. */
+#rsLandingHero {
+    bottom: 236px;
+}
+
+#user_content {
+    top: 20px;
+    right: 24px;
+    bottom: auto;
+    left: auto;
+    min-height: 44px;
+    padding: 5px 13px 5px 6px;
+    gap: 10px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 24px;
+    background: rgba(7, 12, 9, 0.64);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.20);
+    backdrop-filter: blur(10px);
+}
+
+#rsLastPlayed {
+    position: relative;
+    top: 40px;
+}
+
+#avatarContainer {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background-color: rgba(5, 8, 6, 0.34);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 31px auto;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.34);
+}
+
+#avatarOverlay {
+    width: 34px;
+    height: 34px;
+}
+
+#user_text {
+    max-width: 170px;
+    font-size: 12px;
+    line-height: 34px;
+}
+
+@media (max-height: 620px) {
+    #rsLandingHero {
+        bottom: 218px;
+    }
+}

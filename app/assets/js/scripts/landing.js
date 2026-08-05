@@ -40,6 +40,7 @@ const launch_progress         = document.getElementById('launch_progress')
 const launch_progress_label   = document.getElementById('launch_progress_label')
 const launch_details_text     = document.getElementById('launch_details_text')
 const server_selection_button = document.getElementById('server_selection_button')
+const server_selection_name   = document.getElementById('server_selection_name')
 const user_text               = document.getElementById('user_text')
 const rsLastPlayedValue       = document.getElementById('rsLastPlayedValue')
 
@@ -233,7 +234,7 @@ function updateSelectedAccount(authUser){
             username = authUser.displayName
         }
         if(authUser.uuid != null){
-            document.getElementById('avatarContainer').style.backgroundImage = `url('https://mc-heads.net/body/${authUser.uuid}/right')`
+            document.getElementById('avatarContainer').style.backgroundImage = `url('https://mc-heads.net/head/${authUser.uuid}/64')`
         }
     }
     user_text.innerHTML = username
@@ -247,16 +248,17 @@ function updateSelectedServer(serv){
     }
     ConfigManager.setSelectedServer(serv != null ? serv.rawServer.id : null)
     ConfigManager.save()
-    server_selection_button.innerHTML = '&#8226; ' + (serv != null ? serv.rawServer.name : Lang.queryJS('landing.noSelection'))
+    server_selection_name.textContent = serv != null ? serv.rawServer.name : Lang.queryJS('landing.noSelection')
+    server_selection_button.setAttribute('data-status', serv != null ? 'checking' : 'offline')
     if(getCurrentView() === VIEWS.settings){
         animateSettingsTabRefresh()
     }
     setLaunchEnabled(serv != null)
 }
 // Real text is set in uibinder.js after distribution initialization.
-server_selection_button.innerHTML = '&#8226; ' + Lang.queryJS('landing.selectedServer.loading')
-server_selection_button.onclick = async e => {
-    e.target.blur()
+server_selection_name.textContent = Lang.queryJS('landing.selectedServer.loading')
+server_selection_button.onclick = async () => {
+    server_selection_button.blur()
     await toggleServerSelection(true)
 }
 
@@ -325,6 +327,7 @@ const refreshServerStatus = async (fade = false) => {
 
     let pLabel = Lang.queryJS('landing.serverStatus.server')
     let pVal = Lang.queryJS('landing.serverStatus.offline')
+    let status = 'offline'
 
     try {
 
@@ -332,11 +335,13 @@ const refreshServerStatus = async (fade = false) => {
         console.log(servStat)
         pLabel = Lang.queryJS('landing.serverStatus.players')
         pVal = servStat.players.online + '/' + servStat.players.max
+        status = 'online'
 
     } catch (err) {
         loggerLanding.warn('Unable to refresh server status, assuming offline.')
         loggerLanding.debug(err)
     }
+    server_selection_button.setAttribute('data-status', status)
     if(fade){
         $('#server_status_wrapper').fadeOut(250, () => {
             document.getElementById('landingPlayerLabel').innerHTML = pLabel

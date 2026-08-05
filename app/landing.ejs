@@ -151,7 +151,14 @@
                 <div id="launch_content">
                     <button id="launch_button"><span class="rsLaunchIcon">▶</span><span>게임 시작</span></button>
                     <div class="bot_divider"></div>
-                    <button id="server_selection_button" class="bot_label"><%- lang('landing.launchButtonPlaceholder') %></button>
+                    <button id="server_selection_button" class="bot_label" data-status="checking">
+                        <span class="serverSelectionDot" aria-hidden="true"></span>
+                        <span class="serverSelectionCopy">
+                            <span class="serverSelectionLabel">현재 서버</span>
+                            <span id="server_selection_name"><%- lang('landing.launchButtonPlaceholder') %></span>
+                        </span>
+                        <span class="serverSelectionChevron" aria-hidden="true">⌄</span>
+                    </button>
                 </div>
                 <div id="launch_details">
                     <div id="launch_details_left">
