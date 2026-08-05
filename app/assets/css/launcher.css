@@ -5242,6 +5242,77 @@ body {
     }
 }
 
+/* Update-ready prompt shown when a newer launcher has downloaded. */
+#overlayContent[data-dialog="update"] {
+    width: min(460px, calc(100% - 80px));
+    padding: 34px 40px 30px;
+}
+
+#overlayContent[data-dialog="update"] #overlayTitle {
+    margin-bottom: 4px;
+}
+
+#overlayContent[data-dialog="update"] #overlayDesc {
+    font-size: 12px;
+    font-weight: 550;
+}
+
+#overlayContent[data-dialog="update"] #overlayDesc strong {
+    color: #83df89;
+    font-size: 14px;
+}
+
+.rsUpdateVersionFlow {
+    display: inline-block;
+    margin: 10px 0 7px;
+    padding: 6px 10px;
+    border: 1px solid rgba(73, 185, 79, 0.24);
+    border-radius: 6px;
+    background: rgba(73, 185, 79, 0.08);
+    color: rgba(238, 245, 240, 0.88);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+#overlayContent[data-dialog="update"] #overlayActionContainer {
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+#overlayContent[data-dialog="update"] #overlayDismissWrapper {
+    display: block;
+}
+
+#overlayContent[data-dialog="update"] #overlayAcknowledge,
+#overlayContent[data-dialog="update"] #overlayDismiss {
+    min-width: 112px;
+    min-height: 38px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    border-radius: 7px;
+    line-height: 36px;
+}
+
+#overlayContent[data-dialog="update"] #overlayDismiss {
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(238, 243, 240, 0.72);
+}
+
+#overlayContent[data-dialog="update"] #overlayDismiss:hover,
+#overlayContent[data-dialog="update"] #overlayDismiss:focus {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.075);
+    color: #fff;
+}
+
+#overlayContent[data-dialog="update"] #overlayAcknowledge:disabled {
+    cursor: wait;
+    opacity: 0.68;
+}
+
 @media (prefers-reduced-motion: reduce) {
     #rsLandingHero,
     #user_content,

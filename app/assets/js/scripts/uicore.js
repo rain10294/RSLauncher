@@ -100,26 +100,51 @@ function changeAllowPrerelease(val){
     ipcRenderer.send('autoUpdateAction', 'allowPrereleaseChange', val)
 }
 
+let promptedUpdateVersion
+
 function showUpdateUI(info){
-    //TODO Make this message a bit more informative `${info.version}`
-    document.getElementById('image_seal_container').setAttribute('update', true)
-    document.getElementById('image_seal_container').onclick = () => {
-        /*setOverlayContent('Update Available', 'A new update for the launcher is available. Would you like to install now?', 'Install', 'Later')
+    const updateVersion = info?.version || ''
+    const updateIndicator = document.getElementById('image_seal_container')
+    const overlayContent = document.getElementById('overlayContent')
+    const acknowledgeButton = document.getElementById('overlayAcknowledge')
+
+    const openUpdatePrompt = () => {
+        overlayContent.setAttribute('data-dialog', 'update')
+        acknowledgeButton.disabled = false
+        setOverlayContent(
+            Lang.queryJS('uicore.autoUpdate.promptTitle'),
+            Lang.queryJS('uicore.autoUpdate.promptMessage', {
+                currentVersion: remote.app.getVersion(),
+                newVersion: updateVersion,
+                targetVersion: updateVersion
+            }),
+            Lang.queryJS('uicore.autoUpdate.installNowButton'),
+            Lang.queryJS('uicore.autoUpdate.laterButton')
+        )
         setOverlayHandler(() => {
             if(!isDev){
+                acknowledgeButton.disabled = true
+                acknowledgeButton.textContent = Lang.queryJS('uicore.autoUpdate.installingButton')
                 ipcRenderer.send('autoUpdateAction', 'installUpdateNow')
             } else {
                 console.error('Cannot install updates in development environment.')
-                toggleOverlay(false)
+                overlayContent.removeAttribute('data-dialog')
+                toggleOverlay(false, true)
             }
         })
         setDismissHandler(() => {
-            toggleOverlay(false)
+            overlayContent.removeAttribute('data-dialog')
+            toggleOverlay(false, true)
         })
-        toggleOverlay(true, true)*/
-        switchView(getCurrentView(), VIEWS.settings, 500, 500, () => {
-            settingsNavItemListener(document.getElementById('settingsNavUpdate'), false)
-        })
+        toggleOverlay(true, true)
+    }
+
+    updateIndicator.setAttribute('update', true)
+    updateIndicator.onclick = openUpdatePrompt
+
+    if(promptedUpdateVersion !== updateVersion && !isOverlayVisible()){
+        promptedUpdateVersion = updateVersion
+        openUpdatePrompt()
     }
 }
 

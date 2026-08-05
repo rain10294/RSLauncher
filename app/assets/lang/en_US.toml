@@ -321,6 +321,10 @@ selectAnotherAccountButton = "Select Another Account"
 checkingForUpdateButton = "Checking for Updates..."
 installNowButton = "Install Now"
 checkForUpdatesButton = "Check for Updates"
+promptTitle = "Launcher Update"
+promptMessage = "A new version <strong>{newVersion}</strong> is ready.<br><span class=\"rsUpdateVersionFlow\">Current {currentVersion} → Latest {targetVersion}</span><br>Update now to restart the launcher automatically."
+laterButton = "Later"
+installingButton = "Starting Update..."
 
 [js.auth.microsoft.error]
 noProfileTitle = "Error During Login:<br>Profile Not Set Up"
