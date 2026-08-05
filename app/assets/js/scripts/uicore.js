@@ -38,48 +38,221 @@ webFrame.setVisualZoomLevelLimits(1, 1)
 
 // Initialize auto updates in production environments.
 let updateCheckListener
+const launcherUpdateState = {
+    status: !isDev && AUTO_UPDATE_ENABLED ? 'checking' : 'disabled',
+    info: null,
+    progress: 0,
+    initialCheckComplete: isDev || !AUTO_UPDATE_ENABLED,
+    launchBlocked: !isDev && AUTO_UPDATE_ENABLED,
+    downloadRequested: false,
+    lastError: null
+}
+
+window.RSLauncherUpdate = {
+    isLaunchBlocked: () => launcherUpdateState.launchBlocked,
+    getStatus: () => launcherUpdateState.status,
+    getInfo: () => launcherUpdateState.info,
+    openPrompt: () => {
+        if(launcherUpdateState.info != null){
+            showUpdateUI(launcherUpdateState.info, true)
+        }
+    },
+    checkForUpdates: () => requestUpdateCheck()
+}
+
+function applyLauncherUpdateLock(){
+    if(typeof window.applyUpdateLaunchLock === 'function'){
+        window.applyUpdateLaunchLock()
+        return
+    }
+
+    const launchButton = document.getElementById('launch_button')
+    if(launchButton != null && launcherUpdateState.launchBlocked){
+        launchButton.disabled = true
+    }
+}
+
+function setLauncherUpdateState(status, launchBlocked){
+    launcherUpdateState.status = status
+    launcherUpdateState.launchBlocked = launchBlocked
+    applyLauncherUpdateLock()
+    refreshLandingUpdateButton()
+}
+
+function requestUpdateCheck(){
+    if(isDev || !AUTO_UPDATE_ENABLED || launcherUpdateState.status === 'downloading' || launcherUpdateState.status === 'downloaded'){
+        return
+    }
+
+    launcherUpdateState.lastError = null
+    const shouldBlockLaunch = !launcherUpdateState.initialCheckComplete || launcherUpdateState.info != null
+    setLauncherUpdateState('checking', shouldBlockLaunch)
+    ipcRenderer.send('autoUpdateAction', 'checkForUpdate')
+}
+
+function beginUpdateDownload(){
+    if(isDev || !AUTO_UPDATE_ENABLED || launcherUpdateState.info == null || launcherUpdateState.status === 'downloading'){
+        return
+    }
+
+    launcherUpdateState.downloadRequested = true
+    launcherUpdateState.lastError = null
+    launcherUpdateState.progress = 0
+    setLauncherUpdateState('downloading', true)
+    refreshOpenUpdatePrompt()
+    ipcRenderer.send('autoUpdateAction', 'downloadUpdate')
+}
+
+function refreshLandingUpdateButton(){
+    const button = document.getElementById('landingUpdateButton')
+    const label = document.getElementById('landingUpdateButtonText')
+    const icon = button?.querySelector('.landingUpdateIcon')
+    if(button == null || label == null || icon == null){
+        return
+    }
+
+    button.hidden = launcherUpdateState.status === 'disabled'
+    button.dataset.state = launcherUpdateState.status
+    button.disabled = false
+
+    switch(launcherUpdateState.status){
+        case 'checking':
+            icon.textContent = '↻'
+            label.textContent = Lang.queryJS('uicore.autoUpdate.landingUpdateChecking')
+            button.disabled = true
+            button.title = Lang.queryJS('uicore.autoUpdate.checkingForUpdateButton')
+            break
+        case 'available':
+            icon.textContent = '↑'
+            label.textContent = Lang.queryJS('uicore.autoUpdate.landingUpdateAvailable', {
+                version: launcherUpdateState.info?.version || ''
+            })
+            button.title = Lang.queryJS('uicore.autoUpdate.launchBlockedTooltip')
+            button.onclick = () => showUpdateUI(launcherUpdateState.info, true)
+            break
+        case 'downloading':
+            icon.textContent = '↓'
+            label.textContent = Lang.queryJS('uicore.autoUpdate.landingUpdateDownloading', {
+                percent: Math.round(launcherUpdateState.progress)
+            })
+            button.title = Lang.queryJS('uicore.autoUpdate.downloadingMessage')
+            button.onclick = () => showUpdateUI(launcherUpdateState.info, true)
+            break
+        case 'downloaded':
+            icon.textContent = '✓'
+            label.textContent = Lang.queryJS('uicore.autoUpdate.landingUpdateInstalling')
+            button.disabled = true
+            button.title = Lang.queryJS('uicore.autoUpdate.installingButton')
+            break
+        case 'error':
+            icon.textContent = '!'
+            label.textContent = Lang.queryJS('uicore.autoUpdate.landingUpdateRetry')
+            button.title = Lang.queryJS('uicore.autoUpdate.updateCheckFailed')
+            button.onclick = () => requestUpdateCheck()
+            break
+        default:
+            icon.textContent = '↻'
+            label.textContent = Lang.queryJS('uicore.autoUpdate.checkForUpdatesButton')
+            button.title = Lang.queryJS('uicore.autoUpdate.landingUpdateCurrent')
+            button.onclick = () => requestUpdateCheck()
+            break
+    }
+}
+
 if(!isDev && AUTO_UPDATE_ENABLED){
     ipcRenderer.on('autoUpdateNotification', (event, arg, info) => {
         switch(arg){
             case 'checking-for-update':
                 loggerAutoUpdater.info('Checking for update..')
+                setLauncherUpdateState('checking', !launcherUpdateState.initialCheckComplete || launcherUpdateState.info != null)
                 settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.checkingForUpdateButton'), true)
                 break
             case 'update-available':
                 loggerAutoUpdater.info('New update available', info.version)
-                
+                launcherUpdateState.info = info
+                launcherUpdateState.initialCheckComplete = true
+                launcherUpdateState.downloadRequested = false
+                setLauncherUpdateState('available', true)
                 populateSettingsUpdateInformation(info)
-                break
-            case 'update-downloaded':
-                loggerAutoUpdater.info('Update ' + info.version + ' ready to be installed.')
                 settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.installNowButton'), false, () => {
-                    if(!isDev){
-                        ipcRenderer.send('autoUpdateAction', 'installUpdateNow')
-                    }
+                    showUpdateUI(info, true)
                 })
                 showUpdateUI(info)
                 break
+            case 'update-download-started':
+                setLauncherUpdateState('downloading', true)
+                refreshOpenUpdatePrompt()
+                break
+            case 'download-progress':
+                launcherUpdateState.progress = Number.isFinite(info?.percent) ? info.percent : 0
+                setLauncherUpdateState('downloading', true)
+                settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.landingUpdateDownloading', {
+                    percent: Math.round(launcherUpdateState.progress)
+                }), true)
+                refreshOpenUpdatePrompt()
+                break
+            case 'update-downloaded':
+                loggerAutoUpdater.info('Update ' + info.version + ' ready to be installed.')
+                launcherUpdateState.info = info
+                launcherUpdateState.progress = 100
+                setLauncherUpdateState('downloaded', true)
+                settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.installingButton'), true)
+                refreshOpenUpdatePrompt()
+                if(launcherUpdateState.downloadRequested){
+                    setTimeout(() => {
+                        ipcRenderer.send('autoUpdateAction', 'installUpdateNow')
+                    }, 600)
+                }
+                break
             case 'update-not-available':
                 loggerAutoUpdater.info('No new update found.')
-                settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.checkForUpdatesButton'))
+                launcherUpdateState.info = null
+                launcherUpdateState.initialCheckComplete = true
+                launcherUpdateState.downloadRequested = false
+                setLauncherUpdateState('current', false)
+                clearUpdateIndicator()
+                populateSettingsUpdateInformation(null)
                 break
             case 'ready':
+                if(updateCheckListener != null){
+                    clearInterval(updateCheckListener)
+                }
                 updateCheckListener = setInterval(() => {
-                    ipcRenderer.send('autoUpdateAction', 'checkForUpdate')
+                    requestUpdateCheck()
                 }, 1800000)
-                ipcRenderer.send('autoUpdateAction', 'checkForUpdate')
+                requestUpdateCheck()
                 break
             case 'realerror':
-                if(info != null && info.code != null){
-                    if(info.code === 'ERR_UPDATER_INVALID_RELEASE_FEED'){
-                        loggerAutoUpdater.info('No suitable releases found.')
-                    } else if(info.code === 'ERR_XML_MISSED_ELEMENT'){
-                        loggerAutoUpdater.info('No releases found.')
-                    } else {
-                        loggerAutoUpdater.error('Error during update check..', info)
-                        loggerAutoUpdater.debug('Error Code:', info.code)
+                launcherUpdateState.lastError = info
+                if(launcherUpdateState.info != null){
+                    loggerAutoUpdater.error('Error while downloading update.', info)
+                    launcherUpdateState.downloadRequested = false
+                    setLauncherUpdateState('available', true)
+                    settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.installNowButton'), false, () => {
+                        showUpdateUI(launcherUpdateState.info, true)
+                    })
+                    refreshOpenUpdatePrompt()
+                } else {
+                    launcherUpdateState.initialCheckComplete = true
+                    setLauncherUpdateState('error', false)
+                    settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.landingUpdateRetry'), false, () => {
+                        requestUpdateCheck()
+                    })
+                    if(info != null && info.code != null){
+                        if(info.code === 'ERR_UPDATER_INVALID_RELEASE_FEED'){
+                            loggerAutoUpdater.info('No suitable releases found.')
+                        } else if(info.code === 'ERR_XML_MISSED_ELEMENT'){
+                            loggerAutoUpdater.info('No releases found.')
+                        } else {
+                            loggerAutoUpdater.error('Error during update check..', info)
+                            loggerAutoUpdater.debug('Error Code:', info.code)
+                        }
                     }
                 }
+                break
+            case 'disabled':
+                launcherUpdateState.initialCheckComplete = true
+                setLauncherUpdateState('disabled', false)
                 break
             default:
                 loggerAutoUpdater.info('Unknown argument', arg)
@@ -102,47 +275,89 @@ function changeAllowPrerelease(val){
 
 let promptedUpdateVersion
 
-function showUpdateUI(info){
-    const updateVersion = info?.version || ''
+function clearUpdateIndicator(){
     const updateIndicator = document.getElementById('image_seal_container')
+    if(updateIndicator != null){
+        updateIndicator.removeAttribute('update')
+        updateIndicator.onclick = null
+    }
+}
+
+function renderUpdatePrompt(){
+    const info = launcherUpdateState.info
     const overlayContent = document.getElementById('overlayContent')
     const acknowledgeButton = document.getElementById('overlayAcknowledge')
+    if(info == null || overlayContent == null || acknowledgeButton == null){
+        return
+    }
+
+    const updateVersion = info.version || ''
+    let description = Lang.queryJS('uicore.autoUpdate.promptMessage', {
+        currentVersion: remote.app.getVersion(),
+        newVersion: updateVersion,
+        targetVersion: updateVersion
+    })
+    let acknowledgeText = Lang.queryJS('uicore.autoUpdate.installNowButton')
+    let acknowledgeDisabled = false
+
+    if(launcherUpdateState.status === 'downloading'){
+        description += '<br><span class="rsUpdateDownloadStatus">' + Lang.queryJS('uicore.autoUpdate.downloadingMessage') + '</span>'
+        acknowledgeText = Lang.queryJS('uicore.autoUpdate.landingUpdateDownloading', {
+            percent: Math.round(launcherUpdateState.progress)
+        })
+        acknowledgeDisabled = true
+    } else if(launcherUpdateState.status === 'downloaded'){
+        description += '<br><span class="rsUpdateDownloadStatus">' + Lang.queryJS('uicore.autoUpdate.installingMessage') + '</span>'
+        acknowledgeText = Lang.queryJS('uicore.autoUpdate.installingButton')
+        acknowledgeDisabled = true
+    } else if(launcherUpdateState.lastError != null){
+        description += '<br><span class="rsUpdateDownloadError">' + Lang.queryJS('uicore.autoUpdate.downloadFailed') + '</span>'
+    }
+
+    overlayContent.setAttribute('data-dialog', 'update')
+    setOverlayContent(
+        Lang.queryJS('uicore.autoUpdate.promptTitle'),
+        description,
+        acknowledgeText,
+        Lang.queryJS('uicore.autoUpdate.laterButton')
+    )
+    acknowledgeButton.disabled = acknowledgeDisabled
+    setOverlayHandler(() => {
+        beginUpdateDownload()
+    })
+    setDismissHandler(() => {
+        overlayContent.removeAttribute('data-dialog')
+        toggleOverlay(false, true)
+    })
+}
+
+function refreshOpenUpdatePrompt(){
+    const overlayContent = document.getElementById('overlayContent')
+    if(overlayContent?.getAttribute('data-dialog') === 'update' && isOverlayVisible()){
+        renderUpdatePrompt()
+    }
+}
+
+function showUpdateUI(info, forceOpen = false){
+    if(info == null){
+        return
+    }
+
+    launcherUpdateState.info = info
+    const updateVersion = info.version || ''
+    const updateIndicator = document.getElementById('image_seal_container')
 
     const openUpdatePrompt = () => {
-        overlayContent.setAttribute('data-dialog', 'update')
-        acknowledgeButton.disabled = false
-        setOverlayContent(
-            Lang.queryJS('uicore.autoUpdate.promptTitle'),
-            Lang.queryJS('uicore.autoUpdate.promptMessage', {
-                currentVersion: remote.app.getVersion(),
-                newVersion: updateVersion,
-                targetVersion: updateVersion
-            }),
-            Lang.queryJS('uicore.autoUpdate.installNowButton'),
-            Lang.queryJS('uicore.autoUpdate.laterButton')
-        )
-        setOverlayHandler(() => {
-            if(!isDev){
-                acknowledgeButton.disabled = true
-                acknowledgeButton.textContent = Lang.queryJS('uicore.autoUpdate.installingButton')
-                ipcRenderer.send('autoUpdateAction', 'installUpdateNow')
-            } else {
-                console.error('Cannot install updates in development environment.')
-                overlayContent.removeAttribute('data-dialog')
-                toggleOverlay(false, true)
-            }
-        })
-        setDismissHandler(() => {
-            overlayContent.removeAttribute('data-dialog')
-            toggleOverlay(false, true)
-        })
+        renderUpdatePrompt()
         toggleOverlay(true, true)
     }
 
-    updateIndicator.setAttribute('update', true)
-    updateIndicator.onclick = openUpdatePrompt
+    if(updateIndicator != null){
+        updateIndicator.setAttribute('update', true)
+        updateIndicator.onclick = openUpdatePrompt
+    }
 
-    if(promptedUpdateVersion !== updateVersion && !isOverlayVisible()){
+    if(forceOpen || (promptedUpdateVersion !== updateVersion && !isOverlayVisible())){
         promptedUpdateVersion = updateVersion
         openUpdatePrompt()
     }

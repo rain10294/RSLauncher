@@ -149,7 +149,7 @@
         <div id="right">
             <div class="bot_wrapper">
                 <div id="launch_content">
-                    <button id="launch_button"><span class="rsLaunchIcon">▶</span><span>게임 시작</span></button>
+                    <button id="launch_button" disabled><span class="rsLaunchIcon">▶</span><span>게임 시작</span></button>
                     <div class="bot_divider"></div>
                     <button id="server_selection_button" class="bot_label" data-status="checking">
                         <span class="serverSelectionDot" aria-hidden="true"></span>
@@ -170,6 +170,10 @@
                         <span id="launch_details_text" class="bot_label"><%- lang('landing.launchDetails') %></span>
                     </div>
                 </div>
+                <button id="landingUpdateButton" type="button" data-state="checking">
+                    <span class="landingUpdateIcon" aria-hidden="true">↻</span>
+                    <span id="landingUpdateButtonText">업데이트 확인 중</span>
+                </button>
             </div>
         </div>
     </div>

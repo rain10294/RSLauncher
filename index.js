@@ -40,15 +40,17 @@ function initAutoUpdater(event, data) {
         // autoUpdater.allowPrerelease = true
     }
     
+    autoUpdater.autoDownload = false
+    autoUpdater.autoInstallOnAppQuit = false
+
     if(isDev){
-        autoUpdater.autoInstallOnAppQuit = false
         autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
-    }
-    if(process.platform === 'darwin'){
-        autoUpdater.autoDownload = false
     }
     autoUpdater.on('update-available', (info) => {
         event.sender.send('autoUpdateNotification', 'update-available', info)
+    })
+    autoUpdater.on('download-progress', (progress) => {
+        event.sender.send('autoUpdateNotification', 'download-progress', progress)
     })
     autoUpdater.on('update-downloaded', (info) => {
         event.sender.send('autoUpdateNotification', 'update-downloaded', info)
@@ -83,6 +85,17 @@ ipcMain.on('autoUpdateAction', (event, arg, data) => {
                 break
             }
             autoUpdater.checkForUpdates()
+                .catch(err => {
+                    event.sender.send('autoUpdateNotification', 'realerror', err)
+                })
+            break
+        case 'downloadUpdate':
+            if(!AUTO_UPDATE_ENABLED){
+                event.sender.send('autoUpdateNotification', 'disabled')
+                break
+            }
+            event.sender.send('autoUpdateNotification', 'update-download-started')
+            autoUpdater.downloadUpdate()
                 .catch(err => {
                     event.sender.send('autoUpdateNotification', 'realerror', err)
                 })

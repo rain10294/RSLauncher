@@ -122,8 +122,23 @@ function setDownloadPercentage(percent){
  * 
  * @param {boolean} val True to enable, false to disable.
  */
+let launchFlowEnabled = false
+
 function setLaunchEnabled(val){
-    document.getElementById('launch_button').disabled = !val
+    launchFlowEnabled = val
+    const launchButton = document.getElementById('launch_button')
+    const updateBlocked = window.RSLauncherUpdate?.isLaunchBlocked() === true
+    launchButton.disabled = !launchFlowEnabled || updateBlocked
+
+    if(updateBlocked){
+        launchButton.title = Lang.queryJS('uicore.autoUpdate.launchBlockedTooltip')
+    } else {
+        launchButton.removeAttribute('title')
+    }
+}
+
+window.applyUpdateLaunchLock = () => {
+    setLaunchEnabled(launchFlowEnabled)
 }
 
 function getWhitelistFailureMessage(reason){
@@ -182,6 +197,11 @@ async function ensureWhitelistAccess(server){
 
 // Bind launch button
 document.getElementById('launch_button').addEventListener('click', async e => {
+    if(window.RSLauncherUpdate?.isLaunchBlocked() === true){
+        window.RSLauncherUpdate.openPrompt()
+        return
+    }
+
     loggerLanding.info('Launching game..')
     try {
         const server = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())

@@ -1486,9 +1486,7 @@ const settingsUpdateActionButton   = document.getElementById('settingsUpdateActi
 function settingsUpdateButtonStatus(text, disabled = false, handler = null){
     settingsUpdateActionButton.innerHTML = text
     settingsUpdateActionButton.disabled = disabled
-    if(handler != null){
-        settingsUpdateActionButton.onclick = handler
-    }
+    settingsUpdateActionButton.onclick = handler
 }
 
 /**
@@ -1509,7 +1507,16 @@ function populateSettingsUpdateInformation(data){
                 shell.openExternal(data.darwindownload)
             })
         } else {
-            settingsUpdateButtonStatus(Lang.queryJS('settings.updates.downloadingButton'), true)
+            const updateStatus = window.RSLauncherUpdate?.getStatus()
+            if(updateStatus === 'downloading'){
+                settingsUpdateButtonStatus(Lang.queryJS('settings.updates.downloadingButton'), true)
+            } else if(updateStatus === 'downloaded'){
+                settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.installingButton'), true)
+            } else {
+                settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.installNowButton'), false, () => {
+                    window.RSLauncherUpdate?.openPrompt()
+                })
+            }
         }
     } else {
         settingsUpdateTitle.innerHTML = Lang.queryJS('settings.updates.latestVersionTitle')
@@ -1530,7 +1537,7 @@ function populateSettingsUpdateInformation(data){
  * @param {Object} data The update data.
  */
 function prepareUpdateTab(data = null){
-    populateSettingsUpdateInformation(data)
+    populateSettingsUpdateInformation(data ?? window.RSLauncherUpdate?.getInfo() ?? null)
 }
 
 /**
