@@ -14,7 +14,7 @@ publish:
     publishAutoUpdate: true
 
 files:
-  - '!{dist,dist-client-id,release,artifacts,profile-builder,whitelist-service,auth-helper,scripts,.gitignore,.vscode,docs,dev-app-update.yml,.nvmrc,eslint.config.mjs}'
+  - '!{dist,dist-client-id,release,artifacts,profile-builder,whitelist-service,auth-helper,custom-installer,scripts,.gitignore,.vscode,docs,dev-app-update.yml,.nvmrc,eslint.config.mjs}'
 
 extraResources:
   - 'libraries'
@@ -35,6 +35,17 @@ nsis:
   perMachine: false
   allowElevation: true
   allowToChangeInstallationDirectory: true
+  include: 'build/installer.nsh'
+  installerLanguages:
+    - 'ko_KR'
+  language: '1042'
+  installerSidebar: 'build/installerSidebar.bmp'
+  uninstallerSidebar: 'build/uninstallerSidebar.bmp'
+  installerHeader: 'build/installerHeader.bmp'
+  createDesktopShortcut: 'always'
+  createStartMenuShortcut: true
+  shortcutName: 'RSLauncher'
+  runAfterFinish: true
 
 # macOS Configuration
 mac:

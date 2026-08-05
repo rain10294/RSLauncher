@@ -10,6 +10,9 @@
 /auth-helper/**/bin/
 /auth-helper/**/obj/
 /auth-helper/publish/
+/custom-installer/**/bin/
+/custom-installer/**/obj/
+/custom-installer/publish/
 /profile-builder/
 /whitelist-service/node_modules/
 /whitelist-service/.wrangler/

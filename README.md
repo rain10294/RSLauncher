@@ -33,7 +33,8 @@ Windows 설치 파일은 다음 명령으로 생성합니다.
 npm run dist:win
 ```
 
-결과물은 `dist/RSLauncher-setup-Windows.exe`에 생성됩니다.
+사용자에게 배포할 커스텀 설치파일은 `dist/RSLauncher-Installer-Windows.exe`에 생성됩니다.
+자동 업데이트용 NSIS 설치파일은 `dist/RSLauncher-setup-Windows.exe`에 함께 생성됩니다.
 
 ## 운영 설정
 

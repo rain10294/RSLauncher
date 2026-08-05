@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>RSLauncher.Installer</AssemblyName>
+    <RootNamespace>RSLauncher.Installer</RootNamespace>
+    <ApplicationIcon>..\..\app\assets\images\RSIcon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\app\assets\images\RSBackground.png" LogicalName="RSBackground.png" />
+    <EmbeddedResource Include="Assets\RSInstallerBackground.png" LogicalName="RSInstallerBackground.png" />
+    <EmbeddedResource Include="..\..\app\assets\images\RSIcon.png" LogicalName="RSIcon.png" />
+    <EmbeddedResource Include="..\..\dist\RSLauncher-setup-Windows.exe" LogicalName="RSLauncherSetup.exe" />
+  </ItemGroup>
+</Project>
