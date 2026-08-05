@@ -149,6 +149,26 @@ offline = "오프라인"
 main = "대표 서버"
 whitelist = "화이트리스트"
 
+[js.landing.systemScan]
+checking = "시스템 정보를 확인하는 중..."
+noCompatibleJava = "호환되는 Java가<br>설치되어 있지 않습니다"
+installJavaMessage = "Minecraft를 실행하려면 64비트 Java {major}이(가) 필요합니다.<br><br>지금 자동으로 설치하시겠습니까?"
+installJava = "Java 자동 설치"
+installJavaManually = "직접 설치"
+javaDownloadPrepare = "Java 다운로드를 준비하는 중..."
+javaDownloadFailureTitle = "Java 다운로드 오류"
+javaDownloadFailureText = "Java를 다운로드하지 못했습니다. 잠시 후 다시 시도해 주세요."
+javaRequired = "Java가 필요합니다"
+javaRequiredMessage = "Minecraft 실행에 64비트 Java {major}이(가) 필요합니다.<br><br>Java를 설치한 뒤 다시 시도해 주세요."
+javaRequiredDismiss = "확인"
+javaRequiredCancel = "돌아가기"
+
+[js.landing.downloadJava]
+findJdkFailure = "설치할 OpenJDK를 찾지 못했습니다."
+javaDownloadCorruptedError = "다운로드한 Java 파일이 손상되었습니다."
+extractingJava = "Java 설치 중..."
+javaInstalled = "Java 설치 완료!"
+
 [js.landing.dlAsync]
 loadingServerInfo = "서버 정보를 불러오는 중..."
 fatalError = "치명적인 오류"
