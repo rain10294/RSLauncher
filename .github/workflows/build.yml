@@ -4,6 +4,17 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/build.yml'
+      - 'app/**'
+      - 'auth-helper/**'
+      - 'build/**'
+      - 'libraries/**'
+      - 'scripts/build-auth-helper.ps1'
+      - 'index.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'electron-builder.yml'
   workflow_dispatch:
 
 concurrency:
@@ -20,6 +31,8 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v6
@@ -34,6 +47,33 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Bump launcher version
+        id: version
+        shell: pwsh
+        run: |
+          $current = (Get-Content -Raw package.json | ConvertFrom-Json).version
+          $parts = $current.Split('.')
+          if ($parts.Count -ne 3) {
+            throw "Launcher version must use major.minor.patch: $current"
+          }
+
+          $major = [int]$parts[0]
+          $minor = [int]$parts[1]
+          $patch = [int]$parts[2] + 1
+          if ($patch -ge 10) {
+            $minor += 1
+            $patch = 0
+          }
+
+          $version = "$major.$minor.$patch"
+          npm version $version --no-git-tag-version
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to update launcher version to $version"
+          }
+
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+          "version=$version" >> $env:GITHUB_OUTPUT
+
       - name: Build Windows installer
         run: npm run dist:win
 
@@ -41,24 +81,34 @@ jobs:
         id: release
         shell: pwsh
         run: |
-          $version = (Get-Content -Raw package.json | ConvertFrom-Json).version
+          $version = "${{ steps.version.outputs.version }}"
           $source = "dist/RSLauncher-setup-$version.exe"
           $asset = "dist/RSLauncher-setup-Windows.exe"
           if (-not (Test-Path -LiteralPath $source)) {
             throw "Windows installer was not created: $source"
           }
           Copy-Item -LiteralPath $source -Destination $asset -Force
-          "tag=v$version" >> $env:GITHUB_OUTPUT
-          "version=$version" >> $env:GITHUB_OUTPUT
           "asset=$asset" >> $env:GITHUB_OUTPUT
+
+      - name: Record launcher version
+        id: source
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore: bump launcher version to $version [skip ci]"
+          git push origin HEAD:main
+          "sha=$(git rev-parse HEAD)" >> $env:GITHUB_OUTPUT
 
       - name: Publish latest Windows installer
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $tag = "${{ steps.release.outputs.tag }}"
-          $version = "${{ steps.release.outputs.version }}"
+          $tag = "${{ steps.version.outputs.tag }}"
+          $version = "${{ steps.version.outputs.version }}"
           $asset = "${{ steps.release.outputs.asset }}"
           gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null
           if ($LASTEXITCODE -eq 0) {
@@ -66,7 +116,7 @@ jobs:
             gh release edit $tag --title "RSLauncher $version" --latest --repo $env:GITHUB_REPOSITORY
           } else {
             gh release create $tag $asset `
-              --target $env:GITHUB_SHA `
+              --target "${{ steps.source.outputs.sha }}" `
               --title "RSLauncher $version" `
               --generate-notes `
               --latest `
