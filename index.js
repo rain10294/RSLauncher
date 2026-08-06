@@ -114,7 +114,9 @@ ipcMain.on('autoUpdateAction', (event, arg, data) => {
             break
         case 'installUpdateNow':
             if(AUTO_UPDATE_ENABLED){
-                autoUpdater.quitAndInstall()
+                // Apply updates without opening the legacy NSIS installer UI,
+                // then relaunch the launcher when the replacement is complete.
+                autoUpdater.quitAndInstall(true, true)
             }
             break
         default:
